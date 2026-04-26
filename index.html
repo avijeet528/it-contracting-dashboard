@@ -859,6 +859,13 @@ html,body{font-family:var(--fs);background:#E4E4E4;color:var(--dk);font-size:15p
 <script>
 'use strict';
 
+// ── Backend URL Configuration ──────────────────
+// Set this to your Azure/backend URL after deployment
+// Leave empty string '' to use built-in local AI only
+window.AI_BACKEND_URL = '';
+// Example when backend is deployed:
+// window.AI_BACKEND_URL = 'https://itdashboard-api.azurewebsites.net';
+
 /* ── PALETTE ── */
 const OR='#D04A02',ORD='#A33A00',ORM='#E8703A',ORL='#FAD4C0',ORT='#FEF0E7';
 const DK='#2D2D2D',MD='#4A4A4A',GD='#7D7D7D',GL='#E0E0E0',GB='#F5F5F5';
@@ -1029,41 +1036,44 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function tryLoadJSON() {
-    // Try loading catalog_data.json 
-    // from same directory (GitHub Pages)
-    const urls = [
-        './catalog_data.json',
-        'catalog_data.json',
-    ];
+  const urls = [
+    './catalog_data.json',
+    'catalog_data.json',
+  ];
 
-    for (const url of urls) {
-        try {
-            const r = await fetch(url);
-            if (!r.ok) continue;
+  for (const url of urls) {
+    try {
+      const r = await fetch(url);
+      if (!r.ok) continue;
 
-            const d = await r.json();
-            if (Array.isArray(d) && d.length) {
-                DB = [...d];
-                rebuildIndex();
-                refreshAll();
+      const d = await r.json();
+      if (Array.isArray(d) && d.length) {
+        DB = [...d];
+        rebuildIndex();
+        refreshAll();
 
-                // Update nav status
-                document.getElementById('nlive').textContent =
-                    `${d.length} Records Loaded`;
-                document.getElementById('nlive').style.background =
-                    '#059669';
-
-                console.log(`✅ Loaded ${d.length} records from ${url}`);
-                return;
-            }
-        } catch (e) {
-            console.log(`Could not load ${url}`);
+        // Update nav live badge
+        const liveEl = document.getElementById('nlive');
+        if (liveEl) {
+          liveEl.textContent = d.length + ' Records Loaded';
+          liveEl.style.background = '#059669';
         }
-    }
 
-    // Use hardcoded demo data as fallback
-    console.log('Using built-in demo data');
-    document.getElementById('nlive').textContent = 'Demo Data';
+        console.log('Loaded ' + d.length + ' records from ' + url);
+        return;
+      }
+    } catch(e) {
+      console.log('Could not load ' + url);
+    }
+  }
+
+  // Fallback — use hardcoded RAW_DATA
+  console.log('catalog_data.json not found — using built-in demo data');
+  const liveEl = document.getElementById('nlive');
+  if (liveEl) {
+    liveEl.textContent = 'Demo Data';
+    liveEl.style.background = '#D97706';
+  }
 }
 
 function rebuildIndex() {
@@ -1786,25 +1796,138 @@ function togNqSvc(s,el){
   else{nqSelSvcs.add(s);el.style.borderColor=OR;el.style.background=ORL;el.style.color=ORD;}
   set('nq-sel-cnt',nqSelSvcs.size+' selected'); scoreIt();
 }
-function handleFile(file){
-  if(!file)return;
-  const prog=document.getElementById('uprog'),fill=document.getElementById('uprog-fill'),txt=document.getElementById('uprog-txt'),pct=document.getElementById('uprog-pct');
-  prog.style.display='block'; document.getElementById('ext-box').style.display='none';
-  let p=0; const iv=setInterval(()=>{p=Math.min(p+Math.random()*18,90);fill.style.width=p+'%';pct.textContent=Math.round(p)+'%';txt.textContent=p<30?'Reading…':p<60?'Extracting…':'Analysing…';},120);
-  const rd=new FileReader();
-  rd.onload=function(e){clearInterval(iv);fill.style.width='100%';pct.textContent='100%';txt.textContent='Complete';
-    setTimeout(()=>{prog.style.display='none';
-      let content=''; try{content=new TextDecoder('utf-8',{fatal:false}).decode(new Uint8Array(e.target.result));}catch(er){}
-      const ex=extractMeta(content,file.name);
-      document.getElementById('ext-box').style.display='block';
-      document.getElementById('ex-fname').textContent=file.name;
-      document.getElementById('ex-price').textContent=ex.price>0?fmt(ex.price):'Not detected — enter below';
-      document.getElementById('ex-vendor').textContent=ex.vendor||'Not detected';
-      document.getElementById('ex-svcs').textContent=ex.services.length?ex.services.join(', '):'None detected';
-      if(ex.price>0) document.getElementById('nq-pr').value=ex.price;
-      if(ex.vendor) document.getElementById('nq-vn').value=ex.vendor;
-      if(ex.services.length){ex.services.forEach(s=>{if(SERVICES.includes(s))nqSelSvcs.add(s);});nqFilterSvcs();}
-      scoreIt();},350);};
+function handleFile(file) {
+  if (!file) return;
+
+  const prog = document.getElementById('uprog');
+  const fill = document.getElementById('uprog-fill');
+  const txt  = document.getElementById('uprog-txt');
+  const pct  = document.getElementById('uprog-pct');
+
+  prog.style.display = 'block';
+  document.getElementById('ext-box').style.display = 'none';
+
+  // ── Try backend API first (LlamaCloud + Claude) ──
+  const backendUrl = window.AI_BACKEND_URL || '';
+
+  if (backendUrl) {
+    fill.style.width  = '20%';
+    pct.textContent   = '20%';
+    txt.textContent   = 'Uploading to LlamaCloud...';
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    fill.style.width = '50%';
+    pct.textContent  = '50%';
+    txt.textContent  = 'Parsing with AI...';
+
+    fetch(backendUrl + '/parse-pdf', {
+      method: 'POST',
+      body:   formData,
+    })
+    .then(function(res) {
+      if (!res.ok) throw new Error('Backend error ' + res.status);
+      return res.json();
+    })
+    .then(function(data) {
+      fill.style.width = '100%';
+      pct.textContent  = '100%';
+      txt.textContent  = 'Complete';
+
+      setTimeout(function() {
+        prog.style.display = 'none';
+
+        const ext = data.extracted || {};
+        document.getElementById('ext-box').style.display = 'block';
+        document.getElementById('ex-fname').textContent  = file.name;
+        document.getElementById('ex-price').textContent  =
+          ext.price && ext.price > 0
+            ? fmt(ext.price)
+            : 'Not detected — enter below';
+        document.getElementById('ex-vendor').textContent =
+          ext.vendor || 'Not detected';
+        document.getElementById('ex-svcs').textContent   =
+          (ext.services || []).join(', ') || 'None detected';
+
+        if (ext.price  && ext.price > 0)
+          document.getElementById('nq-pr').value = ext.price;
+        if (ext.vendor)
+          document.getElementById('nq-vn').value = ext.vendor;
+        if (ext.services && ext.services.length) {
+          ext.services.forEach(function(s) {
+            if (SERVICES.indexOf(s) !== -1) nqSelSvcs.add(s);
+          });
+          nqFilterSvcs();
+        }
+        scoreIt();
+      }, 300);
+    })
+    .catch(function(err) {
+      console.log('Backend unavailable — using local extraction: ' + err);
+      localFileExtract(file, prog, fill, txt, pct);
+    });
+
+  } else {
+    // ── No backend — use local extraction ──
+    localFileExtract(file, prog, fill, txt, pct);
+  }
+}
+
+function localFileExtract(file, prog, fill, txt, pct) {
+  // Animate progress bar
+  let p  = 0;
+  const iv = setInterval(function() {
+    p = Math.min(p + Math.random() * 18, 90);
+    fill.style.width = p + '%';
+    pct.textContent  = Math.round(p) + '%';
+    txt.textContent  = p < 30
+      ? 'Reading...'
+      : p < 60
+        ? 'Extracting...'
+        : 'Analysing...';
+  }, 120);
+
+  const rd = new FileReader();
+  rd.onload = function(e) {
+    clearInterval(iv);
+    fill.style.width = '100%';
+    pct.textContent  = '100%';
+    txt.textContent  = 'Complete';
+
+    setTimeout(function() {
+      prog.style.display = 'none';
+
+      let content = '';
+      try {
+        content = new TextDecoder('utf-8', { fatal: false })
+          .decode(new Uint8Array(e.target.result));
+      } catch(er) {}
+
+      const ex = extractMeta(content, file.name);
+
+      document.getElementById('ext-box').style.display  = 'block';
+      document.getElementById('ex-fname').textContent   = file.name;
+      document.getElementById('ex-price').textContent   =
+        ex.price > 0 ? fmt(ex.price) : 'Not detected — enter below';
+      document.getElementById('ex-vendor').textContent  =
+        ex.vendor || 'Not detected';
+      document.getElementById('ex-svcs').textContent    =
+        ex.services.length ? ex.services.join(', ') : 'None detected';
+
+      if (ex.price  > 0)
+        document.getElementById('nq-pr').value = ex.price;
+      if (ex.vendor)
+        document.getElementById('nq-vn').value = ex.vendor;
+      if (ex.services.length) {
+        ex.services.forEach(function(s) {
+          if (SERVICES.indexOf(s) !== -1) nqSelSvcs.add(s);
+        });
+        nqFilterSvcs();
+      }
+      scoreIt();
+    }, 350);
+  };
   rd.readAsArrayBuffer(file);
 }
 function extractMeta(content,filename){
@@ -2744,24 +2867,130 @@ function showTyping(){
   ms.appendChild(d); ms.scrollTop=ms.scrollHeight;
 }
 function hideTyping(){aiTyping=false; const el=document.getElementById('chat-typing'); if(el)el.remove();}
-async function chatSend(){
-  const inp=document.getElementById('chat-inp');
-  const msg=(inp.value||'').trim(); if(!msg||aiTyping)return;
-  inp.value=''; addChatMsg('u',msg); showTyping();
-  await new Promise(r=>setTimeout(r,500+Math.random()*500)); hideTyping();
-  if(aiCfg.prov!=='local'&&aiCfg.key){
-    try{
-      const sys=`You are an expert IT Contracting Dashboard Agent. Catalog: ${JSON.stringify({vendors:VENDORS,categories:CATEGORIES,totalQuotes:DB.length,sample:DB.slice(0,15).map(r=>({cat:r.cat,vendor:r.vendor,services:r.services,price:r.price}))})}. Market refs: ${JSON.stringify(MREF)}. ${aiCfg.sysp||''}`;
-      const msgs=[{role:'system',content:sys},...aiHist.slice(-8)];
-      let url,hdrs,body;
-      if(aiCfg.prov==='openai'){url='https://api.openai.com/v1/chat/completions';hdrs={'Content-Type':'application/json','Authorization':'Bearer '+aiCfg.key};body={model:aiCfg.mdl,messages:msgs,max_tokens:1500,temperature:0.2};}
-      else{url=aiCfg.azEp.replace(/\/$/,'')+'/openai/deployments/'+aiCfg.azDep+'/chat/completions?api-version='+aiCfg.azVer;hdrs={'Content-Type':'application/json','api-key':aiCfg.key};body={messages:msgs,max_tokens:1500,temperature:0.2};}
-      const res=await fetch(url,{method:'POST',headers:hdrs,body:JSON.stringify(body)});
-      if(!res.ok){const e=await res.json();throw new Error(e.error?.message||res.status);}
-      addChatMsg('b',(await res.json()).choices[0].message.content); return;
-    }catch(err){addChatMsg('b','API error: '+err.message+'\n\nFalling back to built-in intelligence…\n\n'+localAI(msg));return;}
+async function chatSend() {
+  const inp = document.getElementById('chat-inp');
+  const msg = (inp.value || '').trim();
+  if (!msg || aiTyping) return;
+
+  inp.value = '';
+  addChatMsg('u', msg);
+  showTyping();
+
+  const backendUrl = window.AI_BACKEND_URL || '';
+
+  // ── Option 1: Try your Python backend (Claude AI) ──
+  if (backendUrl) {
+    try {
+      const res = await fetch(backendUrl + '/chat', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: msg,
+          catalog: {
+            totalQuotes: DB.length,
+            vendors:     VENDORS,
+            categories:  CATEGORIES,
+            sample:      DB.slice(0, 20),
+          },
+          history: aiHist.slice(-6),
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        hideTyping();
+        addChatMsg('b', data.response);
+        return;
+      }
+    } catch(err) {
+      console.log('Backend unavailable: ' + err);
+    }
   }
-  addChatMsg('b',localAI(msg));
+
+  // ── Option 2: Direct OpenAI / Azure API key ──
+  if (aiCfg.prov !== 'local' && aiCfg.key) {
+    try {
+      const sys = `You are an expert IT Contracting Dashboard Agent.
+Catalog: ${JSON.stringify({
+  vendors:     VENDORS,
+  categories:  CATEGORIES,
+  totalQuotes: DB.length,
+  sample:      DB.slice(0, 15).map(r => ({
+    cat:      r.cat,
+    vendor:   r.vendor,
+    services: r.services,
+    price:    r.price,
+  })),
+})}.
+Market refs: ${JSON.stringify(MREF)}.
+${aiCfg.sysp || ''}`;
+
+      const msgs = [
+        { role: 'system', content: sys },
+        ...aiHist.slice(-8),
+      ];
+
+      let url, hdrs, body;
+
+      if (aiCfg.prov === 'openai') {
+        url  = 'https://api.openai.com/v1/chat/completions';
+        hdrs = {
+          'Content-Type':  'application/json',
+          'Authorization': 'Bearer ' + aiCfg.key,
+        };
+        body = {
+          model:      aiCfg.mdl,
+          messages:   msgs,
+          max_tokens: 1500,
+          temperature: 0.2,
+        };
+      } else {
+        url  = aiCfg.azEp.replace(/\/$/, '')
+          + '/openai/deployments/' + aiCfg.azDep
+          + '/chat/completions?api-version=' + aiCfg.azVer;
+        hdrs = {
+          'Content-Type': 'application/json',
+          'api-key':      aiCfg.key,
+        };
+        body = {
+          messages:    msgs,
+          max_tokens:  1500,
+          temperature: 0.2,
+        };
+      }
+
+      const res = await fetch(url, {
+        method:  'POST',
+        headers: hdrs,
+        body:    JSON.stringify(body),
+      });
+
+      if (!res.ok) {
+        const e = await res.json();
+        throw new Error(e.error?.message || res.status);
+      }
+
+      const data = await res.json();
+      hideTyping();
+      addChatMsg('b', data.choices[0].message.content);
+      return;
+
+    } catch(err) {
+      hideTyping();
+      addChatMsg(
+        'b',
+        'API error: ' + err.message
+        + '\n\nFalling back to built-in intelligence...\n\n'
+        + localAI(msg)
+      );
+      return;
+    }
+  }
+
+  // ── Option 3: Built-in local AI (always works) ──
+  await new Promise(r => setTimeout(r, 500 + Math.random() * 500));
+  hideTyping();
+  addChatMsg('b', localAI(msg));
 }
 
 function localAI(msg){
