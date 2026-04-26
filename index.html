@@ -1029,15 +1029,41 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function tryLoadJSON() {
-  try {
-    const r = await fetch('catalog_data.json');
-    if (!r.ok) return;
-    const d = await r.json();
-    if (Array.isArray(d) && d.length) {
-      DB = [...d]; rebuildIndex(); refreshAll();
-      document.getElementById('nlive').textContent = 'Master Catalog';
+    // Try loading catalog_data.json 
+    // from same directory (GitHub Pages)
+    const urls = [
+        './catalog_data.json',
+        'catalog_data.json',
+    ];
+
+    for (const url of urls) {
+        try {
+            const r = await fetch(url);
+            if (!r.ok) continue;
+
+            const d = await r.json();
+            if (Array.isArray(d) && d.length) {
+                DB = [...d];
+                rebuildIndex();
+                refreshAll();
+
+                // Update nav status
+                document.getElementById('nlive').textContent =
+                    `${d.length} Records Loaded`;
+                document.getElementById('nlive').style.background =
+                    '#059669';
+
+                console.log(`✅ Loaded ${d.length} records from ${url}`);
+                return;
+            }
+        } catch (e) {
+            console.log(`Could not load ${url}`);
+        }
     }
-  } catch(e) {}
+
+    // Use hardcoded demo data as fallback
+    console.log('Using built-in demo data');
+    document.getElementById('nlive').textContent = 'Demo Data';
 }
 
 function rebuildIndex() {
