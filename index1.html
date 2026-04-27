@@ -1857,23 +1857,70 @@ async function chatSend(){
   inp.value='';
   addChatMsg('u',msg);
   showTyping();
+
+  // Try Groq first if key is configured
+  if(aiCfg.groqKey){
+    try{
+      const res=await callGroq(msg);
+      hideTyping();addChatMsg('b',res);return;
+    }catch(e){console.log('Groq failed:',e);}
+  }
+
+  // Try OpenAI if configured
   if(aiCfg.prov!=='local'&&aiCfg.key){
     try{
       const res=await callOpenAI(msg);
       hideTyping();addChatMsg('b',res);return;
     }catch(e){console.log('OpenAI failed:',e);}
   }
+
+  // Try custom backend if configured
   if(aiCfg.beUrl){
     try{
-      const res=await fetch(aiCfg.beUrl,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+(aiCfg.beKey||'')},body:JSON.stringify({message:msg,catalog:{totalQuotes:DB.length,vendors:VENDORS,categories:CATEGORIES,sample:DB.slice(0,20)},history:aiHist.slice(-8)})});
+      const res=await fetch(aiCfg.beUrl,{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+(aiCfg.beKey||'')},
+        body:JSON.stringify({message:msg,catalog:{totalQuotes:DB.length,vendors:VENDORS,categories:CATEGORIES,sample:DB.slice(0,20)},history:aiHist.slice(-8)})
+      });
       if(res.ok){const d=await res.json();hideTyping();addChatMsg('b',d.response||d.message||JSON.stringify(d));return;}
     }catch(e){console.log('Backend failed:',e);}
   }
+
+  // Fall back to built-in intelligence
   await new Promise(r=>setTimeout(r,600));
   hideTyping();
   addChatMsg('b',localAI(msg));
 }
 
+async function callGroq(msg){
+  const sysPrompt=`You are an expert IT Contracting Negotiation Agent for PwC Advisory.
+Catalog: ${DB.length} line items, ${VENDORS.length} vendors, ${CATEGORIES.length} categories.
+Top vendors: ${VENDORS.slice(0,6).join(', ')}.
+Categories: ${CATEGORIES.join(', ')}.
+All prices are per-unit/per-license.
+Be specific with numbers, target prices and negotiation scripts.
+Always give PROCEED, NEGOTIATE or RE-TENDER verdict when relevant.`;
+  const response=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'Authorization':'Bearer '+aiCfg.groqKey
+    },
+    body:JSON.stringify({
+      model:'llama-3.3-70b-versatile',
+      messages:[
+        {role:'system',content:sysPrompt},
+        ...aiHist.slice(-8).map(h=>({role:h.role==='u'?'user':'assistant',content:h.content}))
+      ],
+      max_tokens:1000,
+      temperature:0.3
+    })
+  });
+  if(!response.ok) throw new Error('Groq HTTP '+response.status);
+  const d=await response.json();
+  return d.choices?.[0]?.message?.content||'No response';
+}
+  
 async function callOpenAI(msg){
   const sysPrompt=aiCfg.sysp||`You are an expert IT Contracting Negotiation Agent for PwC Advisory.
 Catalog: ${DB.length} line items, ${VENDORS.length} vendors, ${CATEGORIES.length} categories.
