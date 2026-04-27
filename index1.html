@@ -540,6 +540,7 @@ html,body{font-family:var(--fs);background:#E4E4E4;color:var(--dk);font-size:15p
     <div class="mpanel active" id="ai-oa">
       <div class="mf"><label>Provider</label><select id="ai-prov" onchange="document.getElementById('az-flds').style.display=this.value==='azure'?'block':'none'"><option value="local">Built-in (No API Key)</option><option value="openai">OpenAI (GPT-4o)</option><option value="azure">Azure OpenAI</option></select></div>
       <div class="mf"><label>API Key</label><input type="password" id="ai-key" placeholder="sk-proj-…"></div>
+      <div class="mf"><label>Groq API Key (Free — Recommended)</label><input type="password" id="ai-groq-key" placeholder="gsk_xxxxxxxxxxxxxxxxxxxx"></div>
       <div class="mf"><label>Model</label><select id="ai-mdl"><option value="gpt-4o">GPT-4o</option><option value="gpt-4-turbo">GPT-4 Turbo</option><option value="gpt-3.5-turbo">GPT-3.5 Turbo</option></select></div>
       <div id="az-flds" style="display:none">
         <div class="mf"><label>Azure Endpoint</label><input type="url" id="az-ep"></div>
@@ -601,7 +602,7 @@ html,body{font-family:var(--fs);background:#E4E4E4;color:var(--dk);font-size:15p
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
     </div>
-    <div class="chat-note"><span style="color:var(--orm);cursor:pointer;text-decoration:underline" onclick="document.getElementById('ai-ov').classList.add('on');document.getElementById('ai-mo').classList.add('on')">Configure API key</span> for GPT-4o. Built-in intelligence always active.</div>
+    <div class="chat-note"><span style="color:var(--orm);cursor:pointer;text-decoration:underline" onclick="document.getElementById('ai-ov').classList.add('on');document.getElementById('ai-mo').classList.add('on')">Configure Groq key</span> for AI responses. Built-in intelligence always active.</div>
   </div>
 </div>
 
@@ -657,7 +658,7 @@ const MREF={
 let DB=[], VENDORS=[], CATEGORIES=[], SERVICES=[];
 let nqSelSvcs=new Set(), rqSelSvcs=new Set(), rqCurCat='All';
 let bvSelSvcs=new Set(), bvFiltered=[];
-let aiCfg={prov:'local',key:'',mdl:'gpt-4o',azEp:'',azDep:'',azVer:'2024-02-01',beUrl:'',beKey:'',sysp:''};
+let aiCfg={prov:'local',key:'',mdl:'gpt-4o',groqKey:'',azEp:'',azDep:'',azVer:'2024-02-01',beUrl:'',beKey:'',sysp:''};
 let aiHist=[], aiTyping=false, aiMsgCnt=0;
 
 /* ── INIT ── */
@@ -1990,6 +1991,7 @@ function aiTab(id,el){
 function aiSave(){
   aiCfg.prov=document.getElementById('ai-prov').value;
   aiCfg.key=document.getElementById('ai-key').value;
+  aiCfg.groqKey=document.getElementById('ai-groq-key')?.value||'';
   aiCfg.mdl=document.getElementById('ai-mdl').value;
   aiCfg.azEp=document.getElementById('az-ep').value;
   aiCfg.azDep=document.getElementById('az-dep').value;
@@ -1999,7 +2001,7 @@ function aiSave(){
   aiCfg.sysp=document.getElementById('ai-sysp').value;
   try{localStorage.setItem('pwc_ai',JSON.stringify(aiCfg));}catch(e){}
   const msg=document.getElementById('ai-msg');
-  if(msg){msg.className='mst ok';msg.textContent='✅ Configuration saved';setTimeout(()=>{msg.className='mst';},2500);}
+  if(msg){msg.className='mst ok';msg.textContent='Configuration saved';setTimeout(()=>{msg.className='mst';},2500);}
 }
 
 async function aiTestConn(){
