@@ -7,6 +7,7 @@ office365-rest-python-client
 # AI APIs
 anthropic
 llama-cloud
+groq
 
 # File Processing
 pandas
