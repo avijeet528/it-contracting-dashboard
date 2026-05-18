@@ -662,11 +662,8 @@ html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-siz
             <button class="btn" onclick="exExport()">📥 Export Report</button>
             <button class="btn dark" onclick="exAskGrok()">🤖 Ask Grok</button>
             <button class="btn sec" onclick="exPushRFQ()">📋 Build Counter-RFQ</button>
-            <button class="btn" id="btn-add-master" onclick="openAddToMasterModal()" 
-                    style="background:var(--gn);display:none">
-              💾 Add to Master Data
-            </button>
           </div>
+        </div>
         
         <div class="grid-4" id="ex-kpis"></div>
         
@@ -944,17 +941,10 @@ if (typeof ChartAnnotation !== 'undefined' && Chart) {
 } else if (window['chartjs-plugin-annotation']) {
   Chart.register(window['chartjs-plugin-annotation']);
 }
-
-// ── Backend API (deployed to Render/Railway/etc) ──
-const API_CONFIG = {
-  // 🔧 Set this to your deployed backend URL
-  baseUrl: window.AI_BACKEND_URL || 'https://it-contracting-dashboard-2.onrender.com',
-  // Set to '' or 'http://localhost:8000' for local testing
-};
-  
 const GITHUB_CONFIG = {
   owner: 'asinfracoe',
   repo: 'it-contracting-dashboard',
+  token: 'PASTE_YOUR_PAT_HERE',
   pages_url: 'https://asinfracoe.github.io/it-contracting-dashboard'
 };
 
@@ -1376,31 +1366,29 @@ function fmtHtml(t){return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt
 function dlCSV(csv,name){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=name;a.click();toast('Exported '+name,'ok');}
 
 function fileLink(record){
-  if(DATA_MODE !== 'live' || !record || !record.file)return null;
+  // Only return a real URL when in Live mode AND record has file info
+  if(DATA_MODE!=='live'||!record||!record.file)return null;
   
-  // Use folder from record if present
+  // Derive folder: use record.folder if available, else fallback to proj name
+  // (matching the actual GitHub folder naming convention)
   let folder = record.folder;
-  
-  // Fallback 1: derive from project name with case variants
   if(!folder && record.proj){
-    const projName = record.proj;
-    // Try common folder casing variants — the GitHub URL is case-sensitive
-    folder = projName; // will try as-is first
+    // Map project name to actual GitHub folder name
+    // Adjust these mappings to match your actual repo folders!
+    const folderMap = {
+      'Panasonic': 'panasonic',
+      'Idemia': 'Idemia',      // ← change to lowercase 'idemia' if your folder is lowercase
+      'Tenneco': 'Tenneco'     // ← change to lowercase 'tenneco' if your folder is lowercase
+    };
+    folder = folderMap[record.proj] || record.proj.toLowerCase();
   }
+  if(!folder) return null;
   
-  if(!folder)return null;
-  
-  const owner = GITHUB_CONFIG.owner;
-  const repo  = GITHUB_CONFIG.repo;
-  const encodedFile = encodeURIComponent(record.file);
-  const encodedFolder = encodeURIComponent(folder);
-  
-  // Use blob URL (renders in browser) instead of raw (downloads) for PDFs
-  const ext = record.file.toLowerCase().split('.').pop();
-  const useBlob = ['pdf','txt','md','csv'].includes(ext);
-  const urlType = useBlob ? 'blob' : 'raw';
-  
-  return `https://github.com/${owner}/${repo}/${urlType}/main/quotes/${encodedFolder}/${encodedFile}`;
+  const owner=GITHUB_CONFIG.owner;
+  const repo=GITHUB_CONFIG.repo;
+  const encodedFile=encodeURIComponent(record.file);
+  const encodedFolder=encodeURIComponent(folder);
+  return `https://github.com/${owner}/${repo}/raw/main/quotes/${encodedFolder}/${encodedFile}`;
 }
 
 function fileBtn(record){
@@ -1537,33 +1525,15 @@ function renderSimpleCharts(data,cats){
 }
 
 async function checkLlamaStatus(){
-  const pill = document.getElementById('llama-status');
-  if(!pill) return;
-  
-  try {
-    const r = await fetch(API_CONFIG.baseUrl + '/api/llama-health', {
-      method: 'GET',
-      signal: AbortSignal.timeout(5000),
-    });
-    if(r.ok){
-      const data = await r.json();
-      if(data.llama_key){
-        pill.textContent = '🦙 LLAMA: Ready';
-        pill.style.background = '#D1FAE5';
-        pill.style.color = '#065F46';
-      } else {
-        pill.textContent = '🦙 LLAMA: Key missing';
-        pill.style.background = '#FEF3C7';
-        pill.style.color = '#92400E';
-      }
-    } else {
-      throw new Error('offline');
-    }
-  } catch(e){
-    pill.textContent = '🦙 Backend: Offline';
-    pill.style.background = '#FEE2E2';
-    pill.style.color = '#991B1B';
-    pill.title = 'Backend API unreachable. Configure API_CONFIG.baseUrl in index.html';
+  const BACKEND_URL=window.AI_BACKEND_URL||'https://your-api.onrender.com';
+  const pill=document.getElementById('llama-status');
+  if(!pill)return;
+  try{
+    const r=await fetch(BACKEND_URL+'/api/llama-health',{method:'GET'});
+    if(r.ok){pill.textContent='🦙 LLAMA: Ready';pill.style.background='#D1FAE5';pill.style.color='#065F46';}
+    else{throw new Error('offline');}
+  }catch(e){
+    pill.textContent='🦙 LLAMA: Local mode';pill.style.background='#FEF3C7';pill.style.color='#92400E';
   }
 }
 
@@ -1585,152 +1555,34 @@ async function checkBackendStatus() {
 }
 
 async function tryLoadJSON(){
-  // Try the dashboard-shaped (grouped) file first, then fall back to flat
-  for(const u of ['./catalog_data.json','catalog_data.json','./catalog_grouped.json']){
+  for(const u of ['./catalog_data.json','catalog_data.json']){
     try{
-      const r=await fetch(u);
-      if(!r.ok)continue;
+      const r=await fetch(u);if(!r.ok)continue;
       const d=await r.json();
-      if(!Array.isArray(d) || !d.length)continue;
-      
-      // ─── Format detection & normalisation ──────────────────
-      const sample = d[0];
-      let normalised = d;
-      let formatType = 'grouped';
-      
-      // Detect FLAT format (per-line records with snake_case)
-      if(sample.unit_price !== undefined && sample.service !== undefined && !sample.services){
-        formatType = 'flat';
-        console.warn('Detected FLAT format — auto-aggregating into grouped format for dashboard');
-        normalised = aggregateFlatToGrouped(d);
-        toast(`Auto-converted ${d.length} flat records → ${normalised.length} grouped`,'warn');
-      }
-      // Detect GROUPED with snake_case services (new pipeline output)
-      else if(sample.services && sample.services[0] && typeof sample.services[0] === 'object'){
-        const svcSample = sample.services[0];
-        if(svcSample.unit_price !== undefined && svcSample.unitPrice === undefined){
-          console.warn('Detected snake_case services — converting to camelCase');
-          normalised = d.map(rec => ({
-            ...rec,
-            services: (rec.services||[]).map(s => ({
-              name:      s.name || s.service,
-              sku:       s.sku || '',
-              qty:       s.qty || 1,
-              unitPrice: s.unitPrice ?? s.unit_price ?? 0,
-              lineTotal: s.lineTotal ?? s.line_total ?? ((s.qty||1) * (s.unitPrice ?? s.unit_price ?? 0))
-            }))
-          }));
+      if(Array.isArray(d)&&d.length){
+        LIVE_DB=[...d];
+        // Enable the Live toggle button visually
+        const liveBtn=document.querySelector('.mode-tog[data-mode="live"]');
+        if(liveBtn){
+          liveBtn.style.opacity='1';
+          liveBtn.title='Switch to live extracted data ('+d.length+' records)';
         }
+        toast('Live data available: '+d.length+' records','ok');
+        updateLivePill();
+        return;
       }
-      
-      // ─── Validate that records have minimum required fields ──
-      const validRecords = normalised.filter(r => 
-        r && r.vendor && r.cat && r.services && Array.isArray(r.services)
-      );
-      
-      if(validRecords.length === 0){
-        console.error('No valid records in '+u);
-        continue;
-      }
-      
-      LIVE_DB = [...validRecords];
-      
-      // Enable Live toggle button
-      const liveBtn = document.querySelector('.mode-tog[data-mode="live"]');
-      if(liveBtn){
-        liveBtn.style.opacity = '1';
-        liveBtn.style.cursor = 'pointer';
-        liveBtn.title = `Live data: ${validRecords.length} records (${formatType} format)`;
-      }
-      
-      toast(`Live data ready: ${validRecords.length} records (${formatType})`,'ok');
-      updateLivePill();
-      
-      // Try to load validation report alongside
-      tryLoadValidationReport();
-      return;
-    }catch(e){
-      console.warn('Failed to load '+u+':', e);
-    }
+    }catch(e){}
   }
-  
-  // No live data found
-  const liveBtn = document.querySelector('.mode-tog[data-mode="live"]');
+  // No live data found — disable the Live button
+  const liveBtn=document.querySelector('.mode-tog[data-mode="live"]');
   if(liveBtn){
-    liveBtn.style.opacity = '.4';
-    liveBtn.style.cursor = 'not-allowed';
-    liveBtn.title = 'No catalog_data.json found — run extraction first';
+    liveBtn.style.opacity='.4';
+    liveBtn.style.cursor='not-allowed';
+    liveBtn.title='No catalog_data.json found — extract quotes first';
   }
   updateLivePill();
 }
 
-// ─── NEW: Aggregate flat per-line records into grouped per-file records ──
-function aggregateFlatToGrouped(flatRecords){
-  const byFile = {};
-  
-  flatRecords.forEach(r => {
-    const key = `${r.folder||''}/${r.file||''}`;
-    if(!byFile[key]){
-      byFile[key] = {
-        proj:       r.proj || 'Unknown',
-        region:     r.region || 'Global',
-        country:    r.country || '',
-        cat:        r.cat || 'Other',
-        vendor:     r.vendor || 'Unknown',
-        file:       r.file || '',
-        folder:     r.folder || '',
-        year:       r.year || 2025,
-        quarter:    r.quarter || 'Q1',
-        services:   [],
-        price:      0,
-        confidence: r.confidence || 0,
-      };
-    }
-    
-    const qty = r.qty || 1;
-    const up  = r.unit_price || 0;
-    const lt  = r.line_total || (qty * up);
-    
-    byFile[key].services.push({
-      name:      r.service || 'Unknown',
-      sku:       r.sku || '',
-      qty:       qty,
-      unitPrice: up,
-      lineTotal: lt,
-    });
-    byFile[key].price += lt;
-  });
-  
-  return Object.values(byFile).map(rec => ({
-    ...rec,
-    price: Math.round(rec.price),
-  }));
-}
-
-// ─── NEW: Load and surface validation report if available ──
-async function tryLoadValidationReport(){
-  try{
-    const r = await fetch('./validation_report.json');
-    if(!r.ok)return;
-    const report = await r.json();
-    window._validationReport = report;
-    
-    // Show a subtle indicator if there are issues
-    if(report.summary){
-      const issues = (report.summary.structural_warnings||0) + 
-                     (report.summary.sku_outliers||0);
-      if(issues > 0){
-        const pill = document.getElementById('live-pill');
-        if(pill && DATA_MODE === 'live'){
-          pill.title = `${issues} validation issue(s) — see console for details`;
-          console.info('📋 Validation report:', report.summary);
-        }
-      }
-    }
-  }catch(e){
-    // Silent — report is optional
-  }
-}
 function updateLivePill(){
   const pill=document.getElementById('live-pill');
   if(!pill)return;
@@ -1745,45 +1597,6 @@ function updateLivePill(){
   }
 }
 
-async function showDataFreshness(){
-  if(DATA_MODE !== 'live')return;
-  try{
-    // Try to load extraction state for last-run timestamp
-    const r = await fetch('./.extraction_state.json');
-    if(!r.ok){
-      // Fallback: check catalog_stats.json
-      const r2 = await fetch('./catalog_stats.json');
-      if(!r2.ok)return;
-      const stats = await r2.json();
-      if(stats.generated_at){
-        const ageHours = (Date.now() - new Date(stats.generated_at).getTime()) / (1000*60*60);
-        const pill = document.getElementById('live-pill');
-        if(pill){
-          let freshness = '';
-          if(ageHours < 1) freshness = 'just now';
-          else if(ageHours < 24) freshness = `${Math.round(ageHours)}h ago`;
-          else freshness = `${Math.round(ageHours/24)}d ago`;
-          pill.textContent = `${DB.length} Records · ${freshness}`;
-        }
-      }
-      return;
-    }
-    const state = await r.json();
-    if(state.last_run){
-      const ageHours = (Date.now() - new Date(state.last_run).getTime()) / (1000*60*60);
-      let freshness = '';
-      if(ageHours < 1) freshness = 'just now';
-      else if(ageHours < 24) freshness = `${Math.round(ageHours)}h ago`;
-      else freshness = `${Math.round(ageHours/24)}d ago`;
-      const pill = document.getElementById('live-pill');
-      if(pill) pill.title = `Last extracted ${freshness} (${state.last_run})`;
-    }
-  }catch(e){
-    // Silent
-  }
-}
-
-  
 function setDataMode(mode){
   if(mode==='live' && (!LIVE_DB || LIVE_DB.length===0)){
     toast('No live data available — extract quotes first via GitHub Actions','warn');
@@ -1839,9 +1652,7 @@ function setDataMode(mode){
   inFilterSvc();
   updateLivePill();
   
-  
   toast(`Switched to ${mode==='demo'?'🎯 Demo':'🦙 Live'} data (${DB.length} records)`,'ok');
-  showDataFreshness();
 }
 
 function initTabs(){
@@ -2842,15 +2653,6 @@ function selShowQuote(v,s){
     ${openFileSection}
     ${svcDetailBlock}
     <div class="sp-row"><span class="sp-k">Vendor</span><span class="sp-v">${vbadge(r.vendor)}</span></div>
-    // Insert after Vendor row, before Project row
-    ${typeof r.confidence === 'number' ? `
-      <div class="sp-row">
-        <span class="sp-k">Extraction Confidence</span>
-        <span class="sp-v">
-          <span class="b ${r.confidence >= 80 ? 'gn' : r.confidence >= 60 ? 'am' : 'rd'}">${r.confidence}%</span>
-        </span>
-      </div>
-    ` : ''}
     <div class="sp-row"><span class="sp-k">Project</span><span class="sp-v">${esc(r.proj)}</span></div>
     <div class="sp-row"><span class="sp-k">Category</span><span class="sp-v">${esc(r.cat)}</span></div>
     <div class="sp-row"><span class="sp-k">Location</span><span class="sp-v">${esc(r.country||r.region)}</span></div>
@@ -2994,161 +2796,50 @@ function togInSvc(s,el){
 
 async function handleFile(f){
   if(!f)return;
-  
-  const prog = document.getElementById('prog');
-  prog.classList.add('on');
-  
-  // ── Reset progress UI ──
-  document.querySelectorAll('.prog-step').forEach(s => s.style.background = 'var(--line)');
-  document.getElementById('prog-f').style.width = '0%';
-  set('prog-p', '0%');
-  
-  // ── Step 1: Upload to backend ──
-  set('prog-t', 'Uploading to extractor');
-  document.getElementById('ps-1').style.background = OR;
-  document.getElementById('prog-f').style.width = '20%';
-  set('prog-p', '20%');
-  
-  try {
-    const formData = new FormData();
-    formData.append('file', f);
-    formData.append('project', document.getElementById('in-proj').value || 'Unknown');
-    
-    // ── Step 2: LlamaParse + extraction ──
-    set('prog-t', 'Parsing with LlamaParse');
-    document.getElementById('ps-2').style.background = OR;
-    document.getElementById('prog-f').style.width = '50%';
-    set('prog-p', '50%');
-    
-    const r = await fetch(API_CONFIG.baseUrl + '/api/extract', {
-      method: 'POST',
-      body: formData,
-    });
-    
-    if(!r.ok){
-      const err = await r.text();
-      throw new Error(`Backend error (${r.status}): ${err}`);
-    }
-    
-    // ── Step 3: Process response ──
-    set('prog-t', 'Extracting fields');
-    document.getElementById('ps-3').style.background = OR;
-    document.getElementById('prog-f').style.width = '80%';
-    set('prog-p', '80%');
-    
-    const data = await r.json();
-    if(data.status !== 'ok' || !data.record){
-      throw new Error('Extraction returned no data');
-    }
-    
-    // ── Step 4: Match against catalog ──
-    set('prog-t', 'Benchmarking against history');
-    document.getElementById('ps-4').style.background = OR;
-    document.getElementById('prog-f').style.width = '100%';
-    set('prog-p', '100%');
-    
-    await new Promise(r => setTimeout(r, 300));
-    
-    // ── Store the extracted record (with file blob for later upload) ──
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const b64 = e.target.result.split(',')[1];  // strip data: prefix
-      curExtract = {
-        ...data.record,
-        _file_b64: b64,
-        _file_blob: f,
-      };
-      
-      populateExtractedFields(data.record);
-      toast(`✅ Extracted: ${data.record.vendor} · ${fmt(data.record.price)}`, 'ok');
-    };
-    reader.readAsDataURL(f);
-    
-  } catch(err) {
-    console.error('Extraction failed:', err);
-    toast(`Extraction failed: ${err.message}`, 'err');
-    
-    // Fallback to local heuristic extraction (filename matching)
-    await handleFileLocalFallback(f);
+  const prog=document.getElementById('prog');prog.classList.add('on');
+  const steps=[{t:'Uploading',p:20,s:1},{t:'Parsing with LlamaParse',p:50,s:2},{t:'Extracting fields',p:80,s:3},{t:'Matching historical data',p:100,s:4}];
+  for(const step of steps){
+    set('prog-t',step.t);set('prog-p',step.p+'%');
+    document.getElementById('prog-f').style.width=step.p+'%';
+    for(let i=1;i<=step.s;i++){document.getElementById('ps-'+i).style.background=OR;}
+    await new Promise(r=>setTimeout(r,600));
   }
-}
 
-function populateExtractedFields(record){
-  const services = (record.services || []).map(s => s.name || s.service || '');
-  const confidence = record.confidence || 0;
-  
+  const name=f.name.toLowerCase();
+  let vendor='Unknown',price=0,cat='Cybersecurity',matched=[];
+  const match=DB.find(r=>r.file.toLowerCase()===name);
+  if(match){vendor=match.vendor;price=match.price;cat=match.cat;matched=match.services;}
+  else{
+    if(name.includes('ntt'))vendor='NTT Data';
+    else if(name.includes('cdw'))vendor='CDW';
+    else if(name.includes('shi'))vendor='SHI';
+    else if(name.includes('cisco'))vendor='NTT Data';
+    else if(name.includes('equinix'))vendor='Equinix';
+    else if(name.includes('microsoft')||name.includes('msft'))vendor='Microsoft';
+    else if(name.includes('quest'))vendor='Quest';
+    else if(name.includes('trendmicro')||name.includes('trend'))vendor='TrendMicro';
+    else vendor='NTT Data';
+    price=Math.round(50000+Math.random()*120000);
+    if(name.includes('cyber')||name.includes('trend')||name.includes('cyberark'))cat='Cybersecurity';
+    else if(name.includes('cisco')||name.includes('network')||name.includes('firewall'))cat='Network & Telecom';
+    else if(name.includes('vmware')||name.includes('hosting')||name.includes('oracle'))cat='Hosting';
+    else if(name.includes('m365')||name.includes('microsoft'))cat='M365 & Power Platform';
+    else if(name.includes('servicenow')||name.includes('snow'))cat='Service Management (SNow)';
+    else if(name.includes('quest')||name.includes('idam'))cat='IdAM';
+    const catRows=DB.filter(r=>r.cat===cat);
+    if(catRows.length){matched=[...new Set(catRows.flatMap(r=>r.services||[]))].slice(0,3);}
+  }
+  curExtract={file:f.name,vendor,price,cat,services:matched};
   document.getElementById('ext').classList.add('on');
-  set('ext-file',      record.file || '—');
-  set('ext-ven',       record.vendor || 'Unknown');
-  set('ext-price',     fmtFull(record.price || 0));
-  set('ext-cat',       record.cat || 'Other');
-  set('ext-svc-count', services.length + ' services');
-  
-  // Update confidence badge
-  const confEl = document.getElementById('ext-conf');
-  if(confEl){
-    confEl.textContent = confidence + '%';
-    confEl.className = 'b ' + (confidence >= 80 ? 'gn' : confidence >= 60 ? 'am' : 'rd');
-  }
-  
-  // Populate confirm/override fields
-  document.getElementById('in-ven').value   = record.vendor || '';
-  document.getElementById('in-price').value = record.price || 0;
-  
-  // Set category dropdown
-  const catSel = document.getElementById('in-cat');
-  if(catSel){
-    const opts = [...catSel.options].map(o => o.value);
-    if(opts.includes(record.cat)) catSel.value = record.cat;
-  }
-  
-  // Set project dropdown
-  const projSel = document.getElementById('in-proj');
-  if(projSel && record.proj){
-    const opts = [...projSel.options].map(o => o.value);
-    if(opts.includes(record.proj)) projSel.value = record.proj;
-  }
-  
-  // Pre-select services
-  inSvcs.clear();
-  services.forEach(s => { if(s) inSvcs.add(s); });
+  set('ext-file',f.name);set('ext-ven',vendor);set('ext-price',fmtFull(price));set('ext-cat',cat);set('ext-svc-count',matched.length+' services');
+
+  document.getElementById('in-ven').value=vendor;
+  document.getElementById('in-price').value=price;
+  document.getElementById('in-cat').value=cat;
+  inSvcs.clear();matched.forEach(s=>inSvcs.add(s));
   inFilterSvc();
   scoreQuote();
-  
-  // Show "Add to Master" button if in Live mode
-  showAddToMasterButton();
-}
-
-// ── Fallback: original demo logic when backend is unreachable ──
-async function handleFileLocalFallback(f){
-  toast('Backend unreachable — using local guess', 'warn');
-  const name = f.name.toLowerCase();
-  let vendor = 'Unknown', price = 0, cat = 'Cybersecurity', matched = [];
-  
-  const match = DB.find(r => r.file.toLowerCase() === name);
-  if(match){
-    vendor = match.vendor;
-    price = match.price;
-    cat = match.cat;
-    matched = getSvcNames(match);
-  } else {
-    // Last-resort filename heuristic (kept from original)
-    if(name.includes('ntt'))      vendor = 'NTT Data';
-    else if(name.includes('cdw')) vendor = 'CDW';
-    else if(name.includes('shi')) vendor = 'SHI';
-    else                          vendor = 'Unknown';
-    price = 0;
-  }
-  
-  curExtract = { file: f.name, vendor, price, cat, services: matched, confidence: 30 };
-  populateExtractedFields({
-    file:       f.name,
-    vendor,
-    price,
-    cat,
-    services:   matched.map(n => ({ name: n })),
-    confidence: 30,
-  });
+  toast('Quote extracted successfully','ok');
 }
 
 function loadDemoQuote(){
@@ -3953,373 +3644,36 @@ function openModal(id){document.getElementById(id+'-ov').classList.add('on');doc
 function closeModal(id){document.getElementById(id+'-ov').classList.remove('on');document.getElementById(id+'-modal').classList.remove('on');}
 
 function spLoad(inp){
-  const f = inp.files[0];
+  const f=inp.files[0];
   if(!f)return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
+  const reader=new FileReader();
+  reader.onload=(e)=>{
     try{
-      const data = JSON.parse(e.target.result);
-      if(!Array.isArray(data) || !data.length){
-        document.getElementById('sp-msg').textContent = '❌ JSON must be a non-empty array';
-        toast('Invalid JSON: must be array','err');
-        return;
+      const data=JSON.parse(e.target.result);
+      if(Array.isArray(data)&&data.length){
+        LIVE_DB=[...data];
+        // Enable the Live toggle button
+        const liveBtn=document.querySelector('.mode-tog[data-mode="live"]');
+        if(liveBtn){
+          liveBtn.style.opacity='1';
+          liveBtn.style.cursor='pointer';
+          liveBtn.title='Switch to live extracted data ('+data.length+' records)';
+        }
+        document.getElementById('sp-msg').textContent='✅ Loaded '+data.length+' records · Click 🦙 Live to view';
+        toast('Live data ready: '+data.length+' records — click 🦙 Live toggle','ok');
+        // Auto-switch to live mode
+        setDataMode('live');
       }
-      
-      // ─── Schema validation ─────────────────────────────────
-      const sample = data[0];
-      let normalised = data;
-      
-      if(sample.unit_price !== undefined && !sample.services){
-        // Flat format — auto-aggregate
-        normalised = aggregateFlatToGrouped(data);
-        toast(`Auto-aggregated ${data.length} lines → ${normalised.length} files`,'warn');
-      } else if(sample.services && sample.services[0] && sample.services[0].unit_price !== undefined){
-        // snake_case services — convert
-        normalised = data.map(rec => ({
-          ...rec,
-          services: (rec.services||[]).map(s => ({
-            name:      s.name || s.service,
-            sku:       s.sku || '',
-            qty:       s.qty || 1,
-            unitPrice: s.unitPrice ?? s.unit_price ?? 0,
-            lineTotal: s.lineTotal ?? s.line_total ?? ((s.qty||1)*(s.unit_price ?? 0))
-          }))
-        }));
-      }
-      
-      // Validate minimum required fields
-      const valid = normalised.filter(r => 
-        r && r.vendor && r.cat && Array.isArray(r.services)
-      );
-      
-      if(valid.length === 0){
-        document.getElementById('sp-msg').textContent = 
-          '❌ No valid records (missing vendor/cat/services fields)';
-        toast('Invalid record schema','err');
-        return;
-      }
-      
-      LIVE_DB = [...valid];
-      const liveBtn = document.querySelector('.mode-tog[data-mode="live"]');
-      if(liveBtn){
-        liveBtn.style.opacity = '1';
-        liveBtn.style.cursor = 'pointer';
-        liveBtn.title = `Live: ${valid.length} records`;
-      }
-      
-      document.getElementById('sp-msg').textContent = 
-        `✅ Loaded ${valid.length} records · Click 🦙 Live to view`;
-      toast(`Live data ready: ${valid.length} records`,'ok');
-      setDataMode('live');
     }catch(err){
-      document.getElementById('sp-msg').textContent = '❌ Invalid JSON: '+err.message;
+      document.getElementById('sp-msg').textContent='❌ Invalid JSON';
       toast('Invalid JSON file','err');
     }
   };
   reader.readAsText(f);
 }
 
-// ════════════════════════════════════════════════════════════
-// ADD TO MASTER DATA WORKFLOW
-// ════════════════════════════════════════════════════════════
-
-function showAddToMasterButton(){
-  const btn = document.getElementById('btn-add-master');
-  if(!btn) return;
-  // Only show in Live mode AND when we have an extracted record
-  if(DATA_MODE === 'live' && curExtract){
-    btn.style.display = 'inline-flex';
-  } else {
-    btn.style.display = 'none';
-  }
-}
-
-function openAddToMasterModal(){
-  if(!curExtract){
-    toast('No extracted quote to save','warn');
-    return;
-  }
-  
-  // Build preview from current form values
-  const v       = document.getElementById('in-ven').value.trim();
-  const p       = parseFloat(document.getElementById('in-price').value) || 0;
-  const proj    = document.getElementById('in-proj').value;
-  const cat     = document.getElementById('in-cat').value;
-  const svcList = [...inSvcs];
-  const conf    = curExtract.confidence || 0;
-  
-  const preview = `
-    <div style="display:grid;grid-template-columns:120px 1fr;gap:8px 14px">
-      <div style="color:var(--mid);font-weight:600">File</div>
-      <div style="font-weight:600">${esc(curExtract.file || curExtract._file_blob?.name || '—')}</div>
-      
-      <div style="color:var(--mid);font-weight:600">Vendor</div>
-      <div>${vbadge(v || 'Unknown')}</div>
-      
-      <div style="color:var(--mid);font-weight:600">Project</div>
-      <div style="font-weight:600">${esc(proj)}</div>
-      
-      <div style="color:var(--mid);font-weight:600">Category</div>
-      <div><span class="cat-chip"><span class="cat-dot" style="background:${CAT_COL[cat]||MID}"></span>${esc(cat)}</span></div>
-      
-      <div style="color:var(--mid);font-weight:600">Total Price</div>
-      <div style="font-family:var(--serif);color:var(--or);font-weight:700;font-size:1rem">${fmtFull(p)}</div>
-      
-      <div style="color:var(--mid);font-weight:600">Services</div>
-      <div>${svcList.length} line${svcList.length !== 1 ? 's' : ''}: ${svcList.slice(0,3).map(s => `<span class="b nt">${esc(s.length>20 ? s.substring(0,20)+'…' : s)}</span>`).join(' ')}${svcList.length > 3 ? ` <span style="color:var(--mid);font-size:.72rem">+${svcList.length-3} more</span>` : ''}</div>
-      
-      <div style="color:var(--mid);font-weight:600">Confidence</div>
-      <div><span class="b ${conf >= 80 ? 'gn' : conf >= 60 ? 'am' : 'rd'}">${conf}%</span> ${conf < 60 ? '⚠️ Review carefully before saving' : ''}</div>
-    </div>
-  `;
-  document.getElementById('addmaster-preview').innerHTML = preview;
-  
-  // Pre-select folder based on project
-  const folderSel = document.getElementById('addmaster-folder');
-  const projToFolder = {
-    'Panasonic': 'panasonic',
-    'Idemia':    'Idemia',
-    'Tenneco':   'Tenneco',
-  };
-  if(projToFolder[proj]){
-    folderSel.value = projToFolder[proj];
-  }
-  
-  // Reset status
-  document.getElementById('addmaster-status').innerHTML = '';
-  document.getElementById('addmaster-submit').disabled = false;
-  document.getElementById('addmaster-commit-msg').value = '';
-  
-  openModal('addmaster');
-}
-
-// Toggle custom folder input
-document.addEventListener('change', (e) => {
-  if(e.target.id === 'addmaster-folder'){
-    const custom = document.getElementById('addmaster-folder-custom');
-    custom.style.display = e.target.value === '__custom__' ? 'block' : 'none';
-    if(e.target.value === '__custom__') custom.focus();
-  }
-});
-
-async function submitAddToMaster(){
-  const submitBtn = document.getElementById('addmaster-submit');
-  const statusEl  = document.getElementById('addmaster-status');
-  
-  // ── Validate folder ──
-  let folder = document.getElementById('addmaster-folder').value;
-  if(folder === '__custom__'){
-    folder = document.getElementById('addmaster-folder-custom').value.trim();
-    if(!folder){
-      statusEl.innerHTML = '<span style="color:var(--rd)">❌ Please enter a folder name</span>';
-      return;
-    }
-    folder = folder.replace(/[^a-zA-Z0-9_-]/g, '_');
-  }
-  
-  // ── Build the record from current form values ──
-  const v       = document.getElementById('in-ven').value.trim();
-  const p       = parseFloat(document.getElementById('in-price').value) || 0;
-  const proj    = document.getElementById('in-proj').value;
-  const cat     = document.getElementById('in-cat').value;
-  const svcList = [...inSvcs];
-  
-  if(!v || !p || svcList.length === 0){
-    statusEl.innerHTML = '<span style="color:var(--rd)">❌ Vendor, price, and services are required</span>';
-    return;
-  }
-  
-  // Build services array (use extracted line-item details if available)
-  const services = svcList.map(name => {
-    // Try to find original extracted detail
-    const orig = (curExtract.services || []).find(s => s.name === name);
-    if(orig && orig.unitPrice){
-      return {
-        name:      orig.name,
-        sku:       orig.sku || '',
-        qty:       orig.qty || 1,
-        unitPrice: orig.unitPrice,
-        lineTotal: orig.lineTotal || (orig.qty * orig.unitPrice),
-      };
-    }
-    // Fallback: split price evenly across services
-    const evenSplit = p / svcList.length;
-    return {
-      name,
-      sku:       '',
-      qty:       1,
-      unitPrice: evenSplit,
-      lineTotal: evenSplit,
-    };
-  });
-  
-  // Detect region/country (best-effort)
-  let region = curExtract.region || 'Global';
-  let country = curExtract.country || '';
-  if(!country){
-    // Try to derive from existing project records
-    const sample = DB.find(r => r.proj === proj);
-    if(sample){ region = sample.region; country = sample.country; }
-  }
-  
-  const record = {
-    proj,
-    region,
-    country,
-    cat,
-    vendor:     v,
-    file:       curExtract.file || curExtract._file_blob?.name || 'unknown.pdf',
-    folder,
-    year:       curExtract.year || new Date().getFullYear(),
-    quarter:    curExtract.quarter || `Q${Math.floor(new Date().getMonth() / 3) + 1}`,
-    price:      Math.round(p),
-    services,
-    confidence: curExtract.confidence || 70,
-  };
-  
-  const uploadFile = document.getElementById('addmaster-upload-file').checked;
-  const commitMsg  = document.getElementById('addmaster-commit-msg').value.trim();
-  
-  // ── Submit to backend ──
-  submitBtn.disabled = true;
-  submitBtn.innerHTML = '<div class="typing"><div></div><div></div><div></div></div> Saving…';
-  statusEl.innerHTML = '<span style="color:var(--mid)">⏳ Pushing to GitHub…</span>';
-  
-  try {
-    const body = {
-      record,
-      file_b64:   uploadFile ? curExtract._file_b64 : null,
-      commit_msg: commitMsg || null,
-    };
-    
-    const r = await fetch(API_CONFIG.baseUrl + '/api/save-to-master', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify(body),
-    });
-    
-    if(!r.ok){
-      const err = await r.text();
-      throw new Error(`Server error (${r.status}): ${err}`);
-    }
-    
-    const result = await r.json();
-    
-    statusEl.innerHTML = `
-      <div style="background:var(--gnl);border-left:3px solid var(--gn);padding:10px 12px;border-radius:var(--r);color:var(--gnd);font-weight:600">
-        ✅ ${result.action === 'replaced' ? 'Replaced existing' : 'Added new'} record · 
-        ${result.total_records} total records in catalog
-        ${result.file_uploaded ? '<br>📤 Original file uploaded' : ''}
-      </div>
-    `;
-    
-    // ── Refresh live data ──
-    setTimeout(async () => {
-      // Re-fetch master data
-      try {
-        const r2 = await fetch(API_CONFIG.baseUrl + '/api/master-data');
-        if(r2.ok){
-          const data = await r2.json();
-          if(data.records && data.records.length){
-            LIVE_DB = [...data.records];
-            if(DATA_MODE === 'live'){
-              DB = [...LIVE_DB];
-              renderOverview();
-              updateLivePill();
-            }
-          }
-        }
-      } catch(e){
-        console.warn('Could not refresh master data:', e);
-      }
-      
-      closeModal('addmaster');
-      toast(`✅ Saved! Catalog now has ${result.total_records} records`, 'ok');
-    }, 1500);
-    
-  } catch(err) {
-    console.error('Save failed:', err);
-    statusEl.innerHTML = `
-      <div style="background:var(--rdl);border-left:3px solid var(--rd);padding:10px 12px;border-radius:var(--r);color:var(--rdd);font-weight:600">
-        ❌ Save failed: ${esc(err.message)}
-      </div>
-    `;
-    submitBtn.disabled = false;
-    submitBtn.innerHTML = '💾 Save to Master Data';
-  }
-}
-
-// ── Hook into existing flow ──
-const origSetDataMode = setDataMode;
-setDataMode = function(mode){
-  origSetDataMode(mode);
-  showAddToMasterButton();
-};
-  
   
 </script>
-  
-<!-- ═════════════════════════════════════════════════════════ -->
-<!-- ADD TO MASTER DATA MODAL                                   -->
-<!-- ═════════════════════════════════════════════════════════ -->
-<div class="ov" id="addmaster-ov" onclick="closeModal('addmaster')"></div>
-<div class="modal" id="addmaster-modal" style="width:640px">
-  <div class="modal-h">
-    <div class="modal-t">💾 Add Quote to Master Data</div>
-    <button class="chat-x" onclick="closeModal('addmaster')">×</button>
-  </div>
-  <div class="modal-b">
-    <div style="background:var(--ort);border-left:3px solid var(--or);padding:12px 14px;border-radius:var(--r);margin-bottom:16px;font-size:.78rem;color:var(--ink2);line-height:1.5">
-      ⚠️ <strong>This will permanently add this quote to the live catalog</strong> on GitHub.
-      It will be visible to all dashboard users and will be used in future benchmarks.
-    </div>
-    
-    <div style="background:var(--bg);border-radius:var(--r);padding:14px;margin-bottom:16px">
-      <div style="font-size:.66rem;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">
-        📋 Record Preview
-      </div>
-      <div id="addmaster-preview" style="font-size:.80rem;line-height:1.7"></div>
-    </div>
-    
-    <div class="mf">
-      <label>Project Folder <span style="color:var(--rd)">*</span></label>
-      <select class="select-f" id="addmaster-folder">
-        <option value="panasonic">panasonic</option>
-        <option value="Idemia">Idemia</option>
-        <option value="Tenneco">Tenneco</option>
-        <option value="__custom__">+ New folder…</option>
-      </select>
-      <input type="text" class="input-f" id="addmaster-folder-custom" 
-             placeholder="e.g., new_client_2026" style="display:none;margin-top:6px">
-    </div>
-    
-    <div class="mf">
-      <label>
-        <input type="checkbox" id="addmaster-upload-file" checked style="margin-right:6px">
-        Also upload original file to <code>quotes/&lt;folder&gt;/</code>
-      </label>
-      <div style="font-size:.68rem;color:var(--mid);margin-top:4px">
-        Recommended — allows users to click "Open File" in the dashboard
-      </div>
-    </div>
-    
-    <div class="mf">
-      <label>Commit Message (optional)</label>
-      <input type="text" class="input-f" id="addmaster-commit-msg" 
-             placeholder="📊 Auto-generated if blank">
-    </div>
-    
-    <div id="addmaster-status" style="margin-top:14px;font-size:.78rem;color:var(--mid)"></div>
-    
-    <div style="display:flex;gap:8px;margin-top:18px;justify-content:flex-end">
-      <button class="btn sec" onclick="closeModal('addmaster')">Cancel</button>
-      <button class="btn" id="addmaster-submit" onclick="submitAddToMaster()" 
-              style="background:var(--gn)">
-        💾 Save to Master Data
-      </button>
-    </div>
-  </div>
-</div>
-  
+
 </body>
 </html>
