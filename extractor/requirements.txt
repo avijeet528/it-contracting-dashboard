@@ -24,3 +24,9 @@ python-dotenv
 httpx
 pytesseract
 Pillow
+
+fastapi
+uvicorn[standard]
+httpx
+python-multipart
+pydantic
