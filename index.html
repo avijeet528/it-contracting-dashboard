@@ -684,7 +684,7 @@ html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-siz
           <div class="card-head" style="padding:14px 18px"><div class="card-title"><span class="card-title-ico">📜</span>Comparable Prior Quotes</div><span class="card-meta bl" id="ex-prior-meta">—</span></div>
           <div style="overflow:auto;max-height:340px">
             <table class="cat-table" id="ex-prior-table">
-              <thead><tr><th>Vendor</th><th>Project</th><th style="text-align:left !important">Country</th><th>Matched</th><th>Price</th><th>vs Your Quote</th><th>Year</th></tr></thead>
+              <thead><tr><th>Vendor</th><th>Project</th><th style="text-align:left !important">Country</th><th>Matched</th><th>Avg Unit $</th><th>Quote Total</th><th>vs Your Quote</th><th>Year</th></tr></thead>
               <tbody></tbody>
             </table>
           </div>
@@ -795,8 +795,23 @@ html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-siz
       </div>
 
       <div id="rq-results" style="display:none">
+        
+        <!-- ✅ MOVED TO TOP: Verdict -->
         <div id="rq-verdict"></div>
+        
+        <!-- ✅ MOVED TO TOP: RFQ Strategy & Vendor Shortlist -->
+        <div class="card" style="border-left:4px solid var(--or);background:linear-gradient(180deg,var(--ort) 0%,var(--white) 40%)">
+          <div class="card-head">
+            <div class="card-title"><span class="card-title-ico">🎯</span>RFQ Strategy &amp; Vendor Shortlist</div>
+            <div class="card-meta or">Top Recommendation</div>
+          </div>
+          <div id="rq-strategy"></div>
+        </div>
+        
+        <!-- KPIs after verdict -->
         <div class="grid-4" id="rq-kpis"></div>
+        
+        <!-- Prior Quotes with unit pricing -->
         <div class="card" style="padding:0">
           <div class="card-head" style="padding:14px 18px">
             <div class="card-title"><span class="card-title-ico">📜</span>Prior Quotes for Selected Services</div>
@@ -809,7 +824,9 @@ html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-siz
                   <th>Vendor</th>
                   <th>Project</th>
                   <th>Matched</th>
-                  <th>Price</th>
+                  <th>Avg Unit $</th>
+                  <th>Total Qty</th>
+                  <th>Quote Total</th>
                   <th>Year</th>
                   <th>File</th>
                 </tr>
@@ -818,15 +835,34 @@ html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-siz
             </table>
           </div>
         </div>
+        
+        <!-- Service-Level Pricing with unit pricing -->
         <div class="card" style="padding:0">
-          <div class="card-head" style="padding:14px 18px"><div class="card-title"><span class="card-title-ico">📊</span>Service-Level Pricing</div><div class="card-meta bl">Historical ranges</div></div>
+          <div class="card-head" style="padding:14px 18px">
+            <div class="card-title"><span class="card-title-ico">📊</span>Service-Level Pricing</div>
+            <div class="card-meta bl">Unit price ranges</div>
+          </div>
           <div style="overflow:auto;max-height:380px">
             <table class="cat-table" id="rq-table">
-              <thead><tr><th>Service</th><th>Quotes</th><th>Min</th><th>Avg</th><th>Max</th><th>Target (−10%)</th><th>Best Vendor</th></tr></thead>
+              <thead>
+                <tr>
+                  <th>Service / SKU</th>
+                  <th>Quotes</th>
+                  <th>Avg Qty</th>
+                  <th>Unit Min</th>
+                  <th>Unit Avg</th>
+                  <th>Unit Max</th>
+                  <th>Unit Target (−10%)</th>
+                  <th>Total Target</th>
+                  <th>Best Vendor</th>
+                </tr>
+              </thead>
               <tbody></tbody>
             </table>
           </div>
         </div>
+        
+        <!-- Charts -->
         <div class="grid-2">
           <div class="card">
             <div class="card-head"><div class="card-title"><span class="card-title-ico">🏢</span>Vendor Price Benchmark</div><div class="card-meta or">Best total per vendor</div></div>
@@ -846,10 +882,6 @@ html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-siz
             <div class="card-head"><div class="card-title"><span class="card-title-ico">📈</span>Historical Price Trend</div><div class="card-meta gn">Year-over-year</div></div>
             <div class="chart-wrap sm"><canvas id="rq-trend-chart"></canvas></div>
           </div>
-        </div>
-        <div class="card">
-          <div class="card-head"><div class="card-title"><span class="card-title-ico">🎯</span>RFQ Strategy &amp; Vendor Shortlist</div><div class="card-meta or">Recommendation</div></div>
-          <div id="rq-strategy"></div>
         </div>
       </div>
     </div>
@@ -2261,18 +2293,23 @@ function selRender(){
   if(selMtxSvcs.size===0)sel.forEach(s=>selMtxSvcs.add(s));
   const vens=allVens.filter(v=>selMtxVens.has(v));
   const activeSel=sel.filter(s=>selMtxSvcs.has(s));
+// ✅ NEW: Use UNIT PRICES instead of total quote prices for fair comparison
   const svcPrices={};
   activeSel.forEach(s=>{
     svcPrices[s]={};
     vens.forEach(v=>{
-      const allQuotes=matches.filter(r=>r.vendor===v&&hasService(r,s)&&r.price>0);
-      if(allQuotes.length===0){svcPrices[s][v]=null;}
+      const allQuotes=matches.filter(r=>r.vendor===v && hasService(r,s));
+      const unitPrices = allQuotes.map(r => {
+        const svc = getSvcObj(r, s);
+        return svc ? svc.unitPrice : 0;
+      }).filter(p => p > 0);
+      
+      if(unitPrices.length===0){svcPrices[s][v]=null;}
       else{
-        const ps=allQuotes.map(r=>r.price);
         let val;
-        if(selMtxMode==='lowest')val=Math.min(...ps);
-        else if(selMtxMode==='highest')val=Math.max(...ps);
-        else val=ps.reduce((a,b)=>a+b,0)/ps.length;
+        if(selMtxMode==='lowest')val=Math.min(...unitPrices);
+        else if(selMtxMode==='highest')val=Math.max(...unitPrices);
+        else val=unitPrices.reduce((a,b)=>a+b,0)/unitPrices.length;
         svcPrices[s][v]=val;
       }
     });
@@ -2282,11 +2319,18 @@ function selRender(){
     const ps=Object.values(svcPrices[s]).filter(p=>p!==null&&p>0);
     if(ps.length){bestPerSvc[s]=Math.min(...ps);worstPerSvc[s]=Math.max(...ps);}
   });
-  let mtx='<table class="mtx"><thead><tr><th class="sh">Service</th>';
+  let mtx='<table class="mtx"><thead><tr><th class="sh">Service / SKU</th>';
   vens.forEach(v=>{mtx+=`<th class="vh">${vbadge(v)}</th>`;});
   mtx+='</tr></thead><tbody>';
   activeSel.forEach(s=>{
-    mtx+=`<tr><td class="sc">${esc(s)}</td>`;
+    // Get a representative SKU for this service
+    const sampleQuote = matches.find(r => hasService(r,s));
+    const sampleSvc = sampleQuote ? getSvcObj(sampleQuote, s) : null;
+    const skuBadge = sampleSvc && sampleSvc.sku && sampleSvc.sku !== '—' 
+      ? `<div style="font-family:monospace;font-size:.60rem;color:var(--mid);margin-top:3px;font-weight:500">${esc(sampleSvc.sku)}</div>` 
+      : '';
+    
+    mtx+=`<tr><td class="sc">${esc(s)}${skuBadge}</td>`;
     vens.forEach(v=>{
       const p=svcPrices[s][v];
       if(p===null){mtx+='<td class="nc">—</td>';}
@@ -2294,14 +2338,14 @@ function selRender(){
         let cls='pc';
         if(p===bestPerSvc[s])cls+=' bc';
         else if(p===worstPerSvc[s]&&vens.length>1)cls+=' wc';
-        mtx+=`<td class="${cls}" onclick="selShowQuote('${esc(v).replace(/'/g,"\\'")}','${esc(s).replace(/'/g,"\\'")}')">${fmt(p)}</td>`;
+        mtx+=`<td class="${cls}" onclick="selShowQuote('${esc(v).replace(/'/g,"\\'")}','${esc(s).replace(/'/g,"\\'")}')">${fmtUnit(p)}<div style="font-size:.58rem;color:var(--mid);margin-top:2px;font-weight:500">/ unit</div></td>`;
       }
     });
     mtx+='</tr>';
   });
   mtx+='</tbody></table>';
   document.getElementById('sel-mtx-wrap').innerHTML=mtx;
-  set('sel-mtx-meta',activeSel.length+' × '+vens.length+' · '+selMtxMode);
+  set('sel-mtx-meta',activeSel.length+' × '+vens.length+' · '+selMtxMode+' unit price');
   set('sel-mtx-ven-cnt',selMtxVens.size===allVens.length?'All ('+allVens.length+')':selMtxVens.size+' of '+allVens.length);
   set('sel-mtx-svc-cnt',selMtxSvcs.size===sel.length?'All ('+sel.length+')':selMtxSvcs.size+' of '+sel.length);
 
@@ -2433,58 +2477,94 @@ function renderSelSvcBreakdown(sel,pool){
         <div class="b rd">❌ No historical quotes</div>
       </div>`;
     }
+    
+    // ✅ NEW: Compute UNIT PRICE stats
+    const unitPrices = quotes.map(r => {
+      const svc = getSvcObj(r, s);
+      return svc ? svc.unitPrice : 0;
+    }).filter(p => p > 0);
+    
+    const upMin = unitPrices.length ? Math.min(...unitPrices) : 0;
+    const upMax = unitPrices.length ? Math.max(...unitPrices) : 0;
+    const upAvg = unitPrices.length ? unitPrices.reduce((a,b)=>a+b,0)/unitPrices.length : 0;
+    
     const prices=quotes.map(r=>r.price).filter(p=>p>0);
     const mn=prices.length?Math.min(...prices):0;
     const mx=prices.length?Math.max(...prices):0;
     const av=prices.length?prices.reduce((a,b)=>a+b,0)/prices.length:0;
-    const minQ=quotes.find(r=>r.price===mn);
-    const maxQ=quotes.find(r=>r.price===mx);
     const regions=[...new Set(quotes.map(r=>r.region))];
     const countries=[...new Set(quotes.map(r=>r.country))];
     const vendors=[...new Set(quotes.map(r=>r.vendor))];
     const uid='svcBD-'+s.replace(/[^a-z0-9]/gi,'').substring(0,20);
     
+    // Get sample SKU
+    const sampleSvc = quotes.length ? getSvcObj(quotes[0], s) : null;
+    const skuLabel = sampleSvc && sampleSvc.sku ? sampleSvc.sku : '—';
+    
     return `<div style="background:var(--white);border:1px solid var(--line);border-radius:var(--r2);margin-bottom:12px;overflow:hidden">
-      <div style="padding:14px 16px;background:linear-gradient(90deg,var(--ort),transparent);border-bottom:1px solid var(--line2);display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="toggleSvcBD('${uid}')">
-        <div style="flex:1">
-          <div style="font-weight:700;color:var(--ink);font-size:.88rem;margin-bottom:4px">${esc(s)}</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;font-size:.70rem;color:var(--mid);font-weight:600">
-            <span class="b bl">${quotes.length} quote${quotes.length>1?'s':''}</span>
-            <span class="b nt">${vendors.length} vendor${vendors.length>1?'s':''}</span>
-            <span class="b nt">${countries.length} countr${countries.length>1?'ies':'y'}</span>
+      <div style="padding:14px 16px;background:linear-gradient(90deg,var(--ort),transparent);border-bottom:1px solid var(--line2);cursor:pointer" onclick="toggleSvcBD('${uid}')">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:8px">
+          <div style="flex:1">
+            <div style="font-weight:700;color:var(--ink);font-size:.88rem;margin-bottom:4px">${esc(s)}</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;font-size:.66rem;color:var(--mid);font-weight:600;margin-bottom:6px">
+              <span style="font-family:monospace;background:var(--line2);padding:2px 6px;border-radius:3px">SKU: ${esc(skuLabel)}</span>
+              <span class="b bl">${quotes.length} quote${quotes.length>1?'s':''}</span>
+              <span class="b nt">${vendors.length} vendor${vendors.length>1?'s':''}</span>
+              <span class="b nt">${countries.length} countr${countries.length>1?'ies':'y'}</span>
+            </div>
           </div>
-        </div>
-        <div style="display:flex;gap:18px;align-items:center">
-          <div style="text-align:right"><div style="font-size:.62rem;color:var(--mid);font-weight:700;text-transform:uppercase">Min</div><div style="font-family:var(--serif);font-size:1.05rem;color:var(--gn);font-weight:700">${fmt(mn)}</div></div>
-          <div style="text-align:right"><div style="font-size:.62rem;color:var(--mid);font-weight:700;text-transform:uppercase">Avg</div><div style="font-family:var(--serif);font-size:1.05rem;color:var(--or);font-weight:700">${fmt(av)}</div></div>
-          <div style="text-align:right"><div style="font-size:.62rem;color:var(--mid);font-weight:700;text-transform:uppercase">Max</div><div style="font-family:var(--serif);font-size:1.05rem;color:var(--rd);font-weight:700">${fmt(mx)}</div></div>
           <span id="${uid}-arrow" style="color:var(--mid);font-size:.9rem;transition:transform .2s">▼</span>
         </div>
+        
+        <!-- ✅ NEW: Unit price stats grid (primary) -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px">
+          <div style="background:var(--white);padding:8px 10px;border-radius:var(--r);border:1px solid var(--line)">
+            <div style="font-size:.60rem;color:var(--mid);font-weight:700;text-transform:uppercase;letter-spacing:.4px">Unit Min</div>
+            <div style="font-family:var(--serif);font-size:1rem;color:var(--gn);font-weight:700;margin-top:2px">${fmtUnit(upMin)}</div>
+            <div style="font-size:.60rem;color:var(--mid);margin-top:2px">per unit</div>
+          </div>
+          <div style="background:var(--white);padding:8px 10px;border-radius:var(--r);border:1px solid var(--line)">
+            <div style="font-size:.60rem;color:var(--mid);font-weight:700;text-transform:uppercase;letter-spacing:.4px">Unit Avg</div>
+            <div style="font-family:var(--serif);font-size:1rem;color:var(--or);font-weight:700;margin-top:2px">${fmtUnit(upAvg)}</div>
+            <div style="font-size:.60rem;color:var(--mid);margin-top:2px">per unit</div>
+          </div>
+          <div style="background:var(--white);padding:8px 10px;border-radius:var(--r);border:1px solid var(--line)">
+            <div style="font-size:.60rem;color:var(--mid);font-weight:700;text-transform:uppercase;letter-spacing:.4px">Unit Max</div>
+            <div style="font-family:var(--serif);font-size:1rem;color:var(--rd);font-weight:700;margin-top:2px">${fmtUnit(upMax)}</div>
+            <div style="font-size:.60rem;color:var(--mid);margin-top:2px">per unit</div>
+          </div>
+        </div>
       </div>
+      
       <div id="${uid}" style="display:none;padding:12px 16px;background:var(--bg)">
-        <div style="font-size:.68rem;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">All Quotes (click row for details)</div>
+        <div style="font-size:.68rem;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">All Quotes (sorted by unit price)</div>
         <table class="cat-table" style="background:var(--white);border-radius:var(--r);overflow:hidden">
           <thead>
             <tr>
               <th>Vendor</th>
               <th style="text-align:left !important">Project</th>
               <th style="text-align:left !important">Country</th>
-              <th style="text-align:left !important">Region</th>
               <th>Year</th>
-              <th>Price</th>
-              <th style="text-align:left !important">File</th>
+              <th>Qty</th>
+              <th>Unit $</th>
+              <th>Line Total</th>
+              <th>Quote Total</th>
             </tr>
           </thead>
           <tbody>
-            ${quotes.sort((a,b)=>a.price-b.price).map(r=>`
+            ${quotes.map(r => {
+              const svc = getSvcObj(r, s);
+              return {r, svc, unitPrice: svc?svc.unitPrice:0, qty: svc?svc.qty:0};
+            }).sort((a,b)=>a.unitPrice-b.unitPrice).map(({r, svc, unitPrice, qty})=>`
               <tr onclick="selShowQuote('${esc(r.vendor).replace(/'/g,"\\'")}','${esc(s).replace(/'/g,"\\'")}')" style="cursor:pointer">
                 <td style="text-align:left">${vbadge(r.vendor)}</td>
                 <td style="text-align:left">${esc(r.proj)}</td>
                 <td style="text-align:left">${esc(r.country||'—')}</td>
-                <td style="text-align:left">${esc(r.region||'—')}</td>
                 <td>${r.year}${r.quarter?' '+r.quarter:''}</td>
-                <td class="num" style="color:${r.price===mn?'var(--gn)':r.price===mx?'var(--rd)':'var(--ink)'};font-weight:700">${fmt(r.price)}${r.price===mn?' 🏆':r.price===mx?' ⚠️':''}</td>
-                <td style="text-align:left;font-size:.70rem;color:var(--mid)">${esc(r.file.length>26?r.file.substring(0,26)+'…':r.file)}</td>
+                <td class="num">${fmtQty(qty)}</td>
+                <td class="num" style="color:${unitPrice===upMin?'var(--gn)':unitPrice===upMax?'var(--rd)':'var(--ink)'};font-weight:700">${fmtUnit(unitPrice)}${unitPrice===upMin?' 🏆':unitPrice===upMax?' ⚠️':''}</td>
+                <td class="num" style="color:var(--or);font-weight:700">${fmt(qty*unitPrice)}</td>
+                <td class="num">${fmt(r.price)}</td>
               </tr>
             `).join('')}
           </tbody>
@@ -2508,41 +2588,77 @@ function selShowQuote(v,s){
   const rs=pool.filter(r=>r.vendor===v&&hasService(r,s));
   if(rs.length===0)return;
   const r=rs[0];
+  const svcObj=getSvcObj(r, s);
   const panel=document.getElementById('sp-panel');
   set('sp-title',v+' → '+s);
   
-  // Build prominent open-file button section (only in live mode with valid link)
   const url = fileLink(r);
   const openFileSection = url 
     ? `<div style="margin-bottom:14px;padding:12px 14px;background:linear-gradient(90deg,var(--ort),transparent);border-left:3px solid var(--or);border-radius:var(--r)">
          <div style="font-size:.62rem;font-weight:800;color:var(--or);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">📄 Quotation File</div>
          <div style="font-size:.74rem;color:var(--ink2);margin-bottom:8px;word-break:break-all">${esc(r.file)}</div>
          <a href="${url}" target="_blank" rel="noopener noreferrer" 
-            style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;
-                   background:var(--or);color:white;border-radius:var(--r);
-                   text-decoration:none;font-size:.78rem;font-weight:700;
-                   transition:background .15s"
-            onmouseover="this.style.background='var(--ord)'"
-            onmouseout="this.style.background='var(--or)'">
+            style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:var(--or);color:white;border-radius:var(--r);text-decoration:none;font-size:.78rem;font-weight:700">
            📂 Open Quotation
-           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-             <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-             <polyline points="15 3 21 3 21 9"/>
-             <line x1="10" y1="14" x2="21" y2="3"/>
-           </svg>
          </a>
        </div>`
     : `<div class="sp-row"><span class="sp-k">File</span><span class="sp-v" style="font-size:.70rem">${esc(r.file)}</span></div>`;
   
+  // ✅ NEW: Service-level pricing detail block (highlighted)
+  const svcDetailBlock = svcObj ? `
+    <div style="margin:14px 0;padding:14px;background:var(--ort);border-radius:var(--r);border-left:3px solid var(--or)">
+      <div style="font-size:.62rem;font-weight:800;color:var(--or);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">📦 Selected Service Detail</div>
+      <div class="sp-row"><span class="sp-k">Service</span><span class="sp-v" style="font-size:.74rem">${esc(svcObj.name)}</span></div>
+      <div class="sp-row"><span class="sp-k">SKU</span><span class="sp-v" style="font-family:monospace;font-size:.74rem">${esc(svcObj.sku||'—')}</span></div>
+      <div class="sp-row"><span class="sp-k">Quantity</span><span class="sp-v">${fmtQty(svcObj.qty)}</span></div>
+      <div class="sp-row"><span class="sp-k">Unit Price</span><span class="sp-v pr">${fmtUnit(svcObj.unitPrice)}</span></div>
+      <div class="sp-row"><span class="sp-k">Line Total</span><span class="sp-v pr">${fmt((svcObj.qty||0)*(svcObj.unitPrice||0))}</span></div>
+    </div>` : '';
+  
+  // ✅ NEW: All services in this quote with full SKU/Qty/Unit Price detail
+  const hasObjectFormat = r.services && typeof r.services[0] === 'object';
+  const allServicesBlock = hasObjectFormat
+    ? `<div style="margin-top:14px">
+         <div class="sec-lbl" style="margin:0 0 10px">All Services in this Quote</div>
+         <table style="width:100%;border-collapse:collapse;font-size:.72rem;background:var(--white);border:1px solid var(--line);border-radius:var(--r);overflow:hidden">
+           <thead>
+             <tr style="background:var(--bg)">
+               <th style="text-align:left;padding:8px;font-size:.64rem;color:var(--mid);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--line)">Service</th>
+               <th style="text-align:right;padding:8px;font-size:.64rem;color:var(--mid);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--line)">Qty</th>
+               <th style="text-align:right;padding:8px;font-size:.64rem;color:var(--mid);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--line)">Unit $</th>
+               <th style="text-align:right;padding:8px;font-size:.64rem;color:var(--mid);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--line)">Total</th>
+             </tr>
+           </thead>
+           <tbody>
+             ${r.services.map(sv=>`
+               <tr ${sv.name===s?'style="background:var(--ort)"':''}>
+                 <td style="padding:8px;border-bottom:1px solid var(--line2)">
+                   <div style="font-weight:600;color:var(--ink)">${esc(sv.name)}</div>
+                   <div style="font-family:monospace;font-size:.62rem;color:var(--mid);margin-top:2px">${esc(sv.sku||'—')}</div>
+                 </td>
+                 <td style="padding:8px;text-align:right;font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line2)">${fmtQty(sv.qty)}</td>
+                 <td style="padding:8px;text-align:right;font-variant-numeric:tabular-nums;font-weight:600;border-bottom:1px solid var(--line2)">${fmtUnit(sv.unitPrice)}</td>
+                 <td style="padding:8px;text-align:right;font-variant-numeric:tabular-nums;color:var(--or);font-weight:700;border-bottom:1px solid var(--line2)">${fmt((sv.qty||0)*(sv.unitPrice||0))}</td>
+               </tr>
+             `).join('')}
+           </tbody>
+         </table>
+       </div>`
+    : `<div style="margin-top:14px">
+         <div class="sec-lbl" style="margin:0 0 10px">All Services in this Quote</div>
+         ${getSvcNames(r).map(sv=>`<div class="b nt" style="margin:2px;display:inline-block">${esc(sv)}</div>`).join('')}
+       </div>`;
+  
   document.getElementById('sp-body').innerHTML=`
     ${openFileSection}
+    ${svcDetailBlock}
     <div class="sp-row"><span class="sp-k">Vendor</span><span class="sp-v">${vbadge(r.vendor)}</span></div>
     <div class="sp-row"><span class="sp-k">Project</span><span class="sp-v">${esc(r.proj)}</span></div>
     <div class="sp-row"><span class="sp-k">Category</span><span class="sp-v">${esc(r.cat)}</span></div>
     <div class="sp-row"><span class="sp-k">Location</span><span class="sp-v">${esc(r.country||r.region)}</span></div>
     <div class="sp-row"><span class="sp-k">Period</span><span class="sp-v">${r.year} ${r.quarter||''}</span></div>
-    <div class="sp-row"><span class="sp-k">Price</span><span class="sp-v pr">${fmtFull(r.price)}</span></div>
-    <div style="margin-top:14px"><div class="sec-lbl" style="margin:0 0 10px">All Services in this Quote</div>${(r.services||[]).map(sv=>`<div class="b nt" style="margin:2px;display:inline-block">${esc(sv)}</div>`).join('')}</div>
+    <div class="sp-row"><span class="sp-k">Quote Total</span><span class="sp-v pr">${fmtFull(r.price)}</span></div>
+    ${allServicesBlock}
   `;
   panel.classList.add('on');
 }
@@ -2868,13 +2984,20 @@ function scoreQuote(){
   const priorEl=document.querySelector('#ex-prior-table tbody');
   set('ex-prior-meta',pool.length+' prior');
   priorEl.innerHTML=pool.slice(0,20).sort((a,b)=>a.price-b.price).map(r=>{
-    const matched=sel.filter(s=>hasService(r,s)).length;
+    const matchedNames=sel.filter(s=>hasService(r,s));
+    const matched=matchedNames.length;
+    // ✅ Calculate avg unit price for matched services
+    const matchedSvcObjs = matchedNames.map(s => getSvcObj(r, s)).filter(o => o);
+    const avgUnit = matchedSvcObjs.length 
+      ? matchedSvcObjs.reduce((a,o) => a + (o.unitPrice||0), 0) / matchedSvcObjs.length 
+      : 0;
     const diff=((r.price-p)/p*100).toFixed(1);
-    return `<tr style="cursor:pointer" onclick="selShowQuote('${esc(r.vendor).replace(/'/g,"\\'")}','${esc((r.services||[]).find(s=>sel.includes(s))||'').replace(/'/g,"\\'")}')">
+    return `<tr style="cursor:pointer" onclick="selShowQuote('${esc(r.vendor).replace(/'/g,"\\'")}','${esc(getSvcNames(r).find(s=>sel.includes(s))||'').replace(/'/g,"\\'")}')">
       <td>${vbadge(r.vendor)}</td>
       <td>${esc(r.proj)}</td>
       <td style="text-align:left">${esc(r.country||r.region||'—')}</td>
       <td><span class="b nt">${matched}/${sel.length}</span></td>
+      <td class="num" style="color:var(--or);font-weight:700">${fmtUnit(avgUnit)}</td>
       <td class="num">${fmt(r.price)}</td>
       <td><span class="b ${diff<0?'gn':'rd'}">${diff>=0?'+':''}${diff}%</span></td>
       <td>${r.year}${r.quarter||''}</td>
@@ -3228,21 +3351,88 @@ function rqRender(){
 
   set('rq-prior-meta',matchedCount+' prior quotes');
   document.querySelector('#rq-prior-table tbody').innerHTML=pool.slice(0,20).sort((a,b)=>a.price-b.price).map(r=>{
-    const matched=sel.filter(s=>hasService(r,s)).length;
-    return `<tr><td>${vbadge(r.vendor)}</td><td>${esc(r.proj)}</td><td><span class="b nt">${matched}/${sel.length}</span></td><td class="num">${fmt(r.price)}</td><td>${r.year}${r.quarter||''}</td><td style="font-size:.70rem;color:var(--mid)">${esc(r.file.substring(0,24))}${r.file.length>24?'…':''}</td></tr>`;
+    const matched=sel.filter(s=>hasService(r,s));
+    // ✅ Calculate avg unit price across matched services
+    const matchedSvcObjs = matched.map(s => getSvcObj(r, s)).filter(o => o);
+    const avgUnit = matchedSvcObjs.length 
+      ? matchedSvcObjs.reduce((a,o) => a + (o.unitPrice||0), 0) / matchedSvcObjs.length 
+      : 0;
+    const totalQty = matchedSvcObjs.reduce((a,o) => a + (o.qty||0), 0);
+    
+    return `<tr>
+      <td>${vbadge(r.vendor)}</td>
+      <td>${esc(r.proj)}</td>
+      <td><span class="b nt">${matched.length}/${sel.length}</span></td>
+      <td class="num" style="color:var(--or);font-weight:700">${fmtUnit(avgUnit)}</td>
+      <td class="num">${fmtQty(totalQty)}</td>
+      <td class="num">${fmt(r.price)}</td>
+      <td>${r.year}${r.quarter||''}</td>
+      <td style="font-size:.70rem;color:var(--mid)">${esc(r.file.substring(0,24))}${r.file.length>24?'…':''}</td>
+    </tr>`;
   }).join('');
 
   const svcStats=sel.map(s=>{
     const rs=pool.filter(r=>hasService(r,s));
     const ps=rs.map(r=>r.price);
+    
+    // ✅ NEW: Compute unit price stats per service
+    const unitPrices = rs.map(r => {
+      const svc = getSvcObj(r, s);
+      return svc ? svc.unitPrice : 0;
+    }).filter(p => p > 0);
+    
+    const qtys = rs.map(r => {
+      const svc = getSvcObj(r, s);
+      return svc ? svc.qty : 0;
+    }).filter(q => q > 0);
+    
+    const sampleSvc = rs.length ? getSvcObj(rs[0], s) : null;
+    
     const mn=ps.length?Math.min(...ps):0;
     const mx=ps.length?Math.max(...ps):0;
     const av=ps.length?ps.reduce((a,b)=>a+b,0)/ps.length:0;
-    const best=ps.length?rs.find(r=>r.price===mn)?.vendor:'—';
-    return{s,count:rs.length,min:mn,max:mx,avg:av,target:av*0.9,best};
+    const upMin = unitPrices.length ? Math.min(...unitPrices) : 0;
+    const upMax = unitPrices.length ? Math.max(...unitPrices) : 0;
+    const upAvg = unitPrices.length ? unitPrices.reduce((a,b)=>a+b,0)/unitPrices.length : 0;
+    const upTarget = upAvg * 0.9;
+    const avgQty = qtys.length ? Math.round(qtys.reduce((a,b)=>a+b,0)/qtys.length) : 0;
+    
+    // Best vendor = lowest UNIT price
+    let bestVendor = '—';
+    if(unitPrices.length){
+      const minUnitPrice = Math.min(...unitPrices);
+      const bestRecord = rs.find(r => {
+        const svc = getSvcObj(r, s);
+        return svc && svc.unitPrice === minUnitPrice;
+      });
+      if(bestRecord) bestVendor = bestRecord.vendor;
+    }
+    
+    return{
+      s, sku: sampleSvc ? sampleSvc.sku : '—',
+      count:rs.length,
+      min:mn, max:mx, avg:av, target:av*0.9,
+      upMin, upMax, upAvg, upTarget, avgQty,
+      best:bestVendor
+    };
   });
-  document.querySelector('#rq-table tbody').innerHTML=svcStats.map(d=>`<tr><td style="font-weight:600">${esc(d.s)}</td><td><span class="b nt">${d.count}</span></td><td class="num">${fmt(d.min)}</td><td class="num">${fmt(d.avg)}</td><td class="num">${fmt(d.max)}</td><td class="num" style="color:var(--or);font-weight:700">${fmt(d.target)}</td><td>${d.best!=='—'?vbadge(d.best):'—'}</td></tr>`).join('');
-
+  
+  document.querySelector('#rq-table tbody').innerHTML=svcStats.map(d=>`
+    <tr>
+      <td style="font-weight:600">
+        ${esc(d.s)}
+        <div style="font-family:monospace;font-size:.62rem;color:var(--mid);margin-top:2px">SKU: ${esc(d.sku)}</div>
+      </td>
+      <td><span class="b nt">${d.count}</span></td>
+      <td class="num">${fmtQty(d.avgQty)}</td>
+      <td class="num" style="color:var(--gn);font-weight:700">${fmtUnit(d.upMin)}</td>
+      <td class="num">${fmtUnit(d.upAvg)}</td>
+      <td class="num" style="color:var(--rd)">${fmtUnit(d.upMax)}</td>
+      <td class="num" style="color:var(--or);font-weight:700">${fmtUnit(d.upTarget)}</td>
+      <td class="num" style="color:var(--gn);font-weight:700">${fmt(d.target)}</td>
+      <td>${d.best!=='—'?vbadge(d.best):'—'}</td>
+    </tr>
+  `).join('');
   const venCov={};
   pool.forEach(r=>{
     const matched=(r.services||[]).filter(s=>sel.includes(s));
@@ -3301,19 +3491,79 @@ function rqRender(){
 
   const stratEl=document.getElementById('rq-strategy');
   const singleVendor=venList.filter(v=>v.cov===sel.length);
+  
+  // ✅ NEW: Calculate aggregate unit-price-based targets
+  const totalUnitTarget = svcStats.reduce((a,d) => a + (d.upTarget * d.avgQty), 0);
+  const totalUnitMin = svcStats.reduce((a,d) => a + (d.upMin * d.avgQty), 0);
+  const totalUnitAvg = svcStats.reduce((a,d) => a + (d.upAvg * d.avgQty), 0);
+  const savingsVsAvg = totalUnitAvg - totalUnitTarget;
+  
   stratEl.innerHTML=`
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
-      <div class="mstat"><div class="mstat-lbl">Recommended Approach</div><div class="mstat-val or" style="font-size:.95rem;font-family:var(--sans);font-weight:700">${singleVendor.length>0?'Single-Vendor RFQ':'Multi-Vendor Bundle'}</div></div>
-      <div class="mstat"><div class="mstat-lbl">Target Vendors</div><div class="mstat-val" style="font-size:.95rem;font-family:var(--sans);font-weight:700">${Math.min(4,venList.length)} vendors</div></div>
+    <!-- ✅ NEW: Top-line strategic summary with unit-price math -->
+    <div style="background:linear-gradient(90deg,var(--ort),transparent);padding:14px 18px;border-radius:var(--r);margin-bottom:14px;border-left:4px solid var(--or)">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+        <div>
+          <div style="font-size:.62rem;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.6px">Approach</div>
+          <div style="font-family:var(--serif);font-size:1.05rem;font-weight:700;color:var(--ink);margin-top:4px">${singleVendor.length>0?'Single-Vendor':'Multi-Vendor'}</div>
+        </div>
+        <div>
+          <div style="font-size:.62rem;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.6px">Vendors to Invite</div>
+          <div style="font-family:var(--serif);font-size:1.05rem;font-weight:700;color:var(--ink);margin-top:4px">${Math.min(4,venList.length)} vendors</div>
+        </div>
+        <div>
+          <div style="font-size:.62rem;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.6px">Target Total</div>
+          <div style="font-family:var(--serif);font-size:1.05rem;font-weight:700;color:var(--or);margin-top:4px">${fmt(totalUnitTarget)}</div>
+          <div style="font-size:.62rem;color:var(--mid);margin-top:2px">unit-based calc</div>
+        </div>
+        <div>
+          <div style="font-size:.62rem;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.6px">Potential Save</div>
+          <div style="font-family:var(--serif);font-size:1.05rem;font-weight:700;color:var(--gn);margin-top:4px">${fmt(savingsVsAvg)}</div>
+          <div style="font-size:.62rem;color:var(--mid);margin-top:2px">vs. avg unit price</div>
+        </div>
+      </div>
     </div>
-    <div class="sec-lbl" style="margin-top:14px">Shortlist</div>
-    ${venList.slice(0,5).map((d,i)=>`<div style="padding:10px;background:var(--bg);border-radius:var(--r);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center"><div style="display:flex;align-items:center;gap:10px"><div style="font-family:var(--serif);font-size:1rem;font-weight:700;color:${i===0?OR:MID}">#${i+1}</div>${vbadge(d.v)}<div style="font-size:.70rem;color:var(--mid)">${d.cov}/${sel.length} services (${d.pct.toFixed(0)}%)</div></div><div style="font-family:var(--serif);color:var(--or);font-weight:700">${fmt(d.avg)}</div></div>`).join('')}
+    
+    <div class="sec-lbl" style="margin-top:8px">Vendor Shortlist <span class="sec-lbl-sub">· ranked by unit-price competitiveness</span></div>
+    ${venList.slice(0,5).map((d,i)=>{
+      // ✅ Calculate this vendor's avg unit price
+      const vQuotes = pool.filter(r => r.vendor === d.v);
+      const vUnitPrices = [];
+      vQuotes.forEach(r => {
+        sel.forEach(s => {
+          if(hasService(r,s)){
+            const svc = getSvcObj(r, s);
+            if(svc && svc.unitPrice > 0) vUnitPrices.push(svc.unitPrice);
+          }
+        });
+      });
+      const vAvgUnit = vUnitPrices.length ? vUnitPrices.reduce((a,b)=>a+b,0)/vUnitPrices.length : 0;
+      
+      return `<div style="padding:10px 12px;background:var(--bg);border-radius:var(--r);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center">
+        <div style="display:flex;align-items:center;gap:10px;flex:1">
+          <div style="font-family:var(--serif);font-size:1rem;font-weight:700;color:${i===0?'var(--or)':'var(--mid)'}">#${i+1}</div>
+          ${vbadge(d.v)}
+          <div style="font-size:.70rem;color:var(--mid)">${d.cov}/${sel.length} services (${d.pct.toFixed(0)}%)</div>
+        </div>
+        <div style="display:flex;gap:18px;align-items:center">
+          <div style="text-align:right">
+            <div style="font-size:.58rem;color:var(--mid);font-weight:700;text-transform:uppercase">Avg Unit</div>
+            <div style="font-family:var(--serif);color:var(--or);font-weight:700;font-size:.92rem">${fmtUnit(vAvgUnit)}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:.58rem;color:var(--mid);font-weight:700;text-transform:uppercase">Total</div>
+            <div style="font-family:var(--serif);color:var(--ink);font-weight:700;font-size:.92rem">${fmt(d.avg)}</div>
+          </div>
+        </div>
+      </div>`;
+    }).join('')}
+    
     <div class="sec-lbl" style="margin-top:14px">Negotiation Playbook</div>
     <ol style="padding-left:20px;font-size:.82rem;line-height:1.8;color:var(--ink2)">
-      <li>Issue RFQ to top ${Math.min(4,venList.length)} vendors with target of <strong style="color:var(--or)">${fmt(targetPrice)}</strong> as anchor</li>
-      <li>Request itemized pricing per service line (prevents bundling games)</li>
-      <li>Lock in ${term}-year term with ≤5% annual escalator</li>
-      <li>Include benchmark clause: if market drops >7%, we get it</li>
+      <li>Issue RFQ to top ${Math.min(4,venList.length)} vendors with target unit price as anchor — total target: <strong style="color:var(--or)">${fmt(totalUnitTarget)}</strong></li>
+      <li>Request <strong>itemized pricing per SKU</strong> with quantity-tiered discounts (prevents bundling games)</li>
+      <li>Reference benchmark: lowest unit price seen historically is <strong style="color:var(--gn)">${fmtUnit(svcStats.length?Math.min(...svcStats.map(d=>d.upMin).filter(p=>p>0)):0)}</strong></li>
+      <li>Lock in ${term}-year term with ≤5% annual escalator on unit price</li>
+      <li>Include benchmark clause: if market unit price drops >7%, we get the lower rate</li>
       <li>Close within 45 days to maintain competitive tension</li>
     </ol>
   `;
