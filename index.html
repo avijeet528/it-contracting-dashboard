@@ -922,54 +922,337 @@ const CAT_COL={'Cybersecurity':'#D04A02','Network & Telecom':'#1F2937','Hosting'
 const PROJ_COL={'Idemia':'#D04A02','Tenneco':'#3B82F6','Panasonic':'#10B981','All':'#1F2937'};
 
 const RAW=[
-  {proj:'Panasonic',region:'EMEA',country:'Germany',cat:'Cybersecurity',vendor:'TrendMicro',file:'Panasonic EU TrendMicro Endpoint.xlsx',services:['Trend Vision One Endpoint Security','Apex One SaaS','Trend Micro Email Security Advanced','Cloud App Security XDR'],price:92400,year:2024,quarter:'Q2'},
-  {proj:'Panasonic',region:'APAC',country:'India',cat:'Cybersecurity',vendor:'TrendMicro',file:'Panasonic India TrendMicro.xlsx',services:['Trend Vision One Endpoint Security','Apex One SaaS','Trend Micro Email Security Advanced'],price:78600,year:2024,quarter:'Q3'},
-  {proj:'Panasonic',region:'APAC',country:'Malaysia',cat:'Cybersecurity',vendor:'TrendMicro',file:'Panasonic MY TrendMicro.xlsx',services:['Trend Vision One Endpoint Security','Trend Micro Email Security Advanced'],price:71200,year:2024,quarter:'Q3'},
-  {proj:'Panasonic',region:'APAC',country:'Japan',cat:'Cybersecurity',vendor:'KnowBe4',file:'PASJ_KnowBe4_JUL2025.pdf',services:['KnowBe4 PhishER Subscription','Security Awareness Training'],price:45800,year:2025,quarter:'Q3'},
-  {proj:'Panasonic',region:'Global',country:'Multi-Region',cat:'Cybersecurity',vendor:'NTT Data',file:'PAS Zscaler Licenses 2026.pdf',services:['Zscaler ZIA Transformation Edition','Zero Trust Network Access','Zscaler Internet Access'],price:156000,year:2026,quarter:'Q1'},
-  {proj:'Panasonic',region:'Global',country:'Multi-Region',cat:'Cybersecurity',vendor:'NTT Data',file:'PAS Zscaler 7Mo Annual.pdf',services:['Zscaler ZIA Transformation Edition','Zero Trust Network Access'],price:142000,year:2026,quarter:'Q2'},
-  {proj:'Panasonic',region:'APAC',country:'Japan',cat:'Cybersecurity',vendor:'SHI',file:'PO PAS JD100 KnowBe4.pdf',services:['KnowBe4 PhishER Subscription','Security Awareness Training'],price:48200,year:2026,quarter:'Q1'},
-  {proj:'Panasonic',region:'EMEA',country:'Germany',cat:'Network & Telecom',vendor:'NTT Data',file:'NTT PAS Cisco Network Rev.1.pdf',services:['Cisco Catalyst C8300','Cisco Catalyst 9800-L','Cisco Catalyst 9200-L','Cisco Wireless 9176I'],price:62400,year:2025,quarter:'Q1'},
-  {proj:'Panasonic',region:'APAC',country:'Singapore',cat:'Network & Telecom',vendor:'NTT Data',file:'PASAP NTT PAS Cisco Rev.3.pdf',services:['Cisco Catalyst C8300','Cisco Catalyst 9800-L','Cisco Nexus 9200L','Cisco Wireless 9176I'],price:58900,year:2025,quarter:'Q2'},
-  {proj:'Panasonic',region:'EMEA',country:'Germany',cat:'Network & Telecom',vendor:'NTT Data',file:'Langen PAS Cisco Switch.pdf',services:['Cisco Catalyst C8300','Cisco Catalyst 9800-L','Cisco Catalyst 9400'],price:71300,year:2025,quarter:'Q2'},
-  {proj:'Panasonic',region:'EMEA',country:'Germany',cat:'Network & Telecom',vendor:'NTT Data',file:'Neumunster PAS Cisco.pdf',services:['Cisco Catalyst C8300','Cisco Catalyst 9400'],price:44600,year:2025,quarter:'Q1'},
-  {proj:'Panasonic',region:'EMEA',country:'Germany',cat:'Network & Telecom',vendor:'NTT Data',file:'Ottobrunn PAS Cisco.pdf',services:['Cisco Catalyst C8300','Cisco Wireless 9176I'],price:38200,year:2025,quarter:'Q1'},
-  {proj:'Panasonic',region:'EMEA',country:'Germany',cat:'Network & Telecom',vendor:'NTT Data',file:'Hamburg PAS Cisco.pdf',services:['Cisco Catalyst C8300'],price:29800,year:2025,quarter:'Q1'},
-  {proj:'Panasonic',region:'APAC',country:'Malaysia',cat:'Network & Telecom',vendor:'NTT Data',file:'Malaysia PAS Cisco.pdf',services:['Cisco Catalyst C8300'],price:32100,year:2025,quarter:'Q4'},
-  {proj:'Panasonic',region:'APAC',country:'India',cat:'Network & Telecom',vendor:'NTT Data',file:'India PAS 3rd Requirement.xlsx',services:['Cisco Catalyst C8300','Cisco Catalyst 9800-L'],price:51700,year:2025,quarter:'Q4'},
-  {proj:'Panasonic',region:'APAC',country:'India',cat:'Network & Telecom',vendor:'NTT Data',file:'India 5th Req Additional AP.pdf',services:['Cisco Meraki MR46E'],price:18400,year:2025,quarter:'Q4'},
-  {proj:'Panasonic',region:'EMEA',country:'Germany',cat:'Network & Telecom',vendor:'NTT Data',file:'Quote 4633286 PA Ottobrunn.pdf',services:['Palo Alto PA 445','Palo Alto NGFW Firewall'],price:28600,year:2025,quarter:'Q4'},
-  {proj:'Panasonic',region:'APAC',country:'India',cat:'Network & Telecom',vendor:'NTT Data',file:'Gurgaon PA Proposal.pdf',services:['Palo Alto PA 445','Palo Alto NGFW Firewall'],price:26900,year:2025,quarter:'Q4'},
-  {proj:'Panasonic',region:'Global',country:'Multi-Region',cat:'Network & Telecom',vendor:'Equinix',file:'PAS Global Backbone.pdf',services:['Equinix Network Interconnect Lines','Global WAN Connectivity'],price:184000,year:2024,quarter:'Q1'},
-  {proj:'Panasonic',region:'Global',country:'Multi-Region',cat:'Network & Telecom',vendor:'Equinix',file:'PAS Cloud Network.pdf',services:['Equinix Network Interconnect Lines','Cloud Connectivity'],price:142600,year:2024,quarter:'Q2'},
-  {proj:'Panasonic',region:'Global',country:'Multi-Region',cat:'Network & Telecom',vendor:'Equinix',file:'PAS Global WAN v4.pdf',services:['Equinix Network Interconnect Lines','Global WAN Connectivity'],price:196300,year:2025,quarter:'Q1'},
-  {proj:'Panasonic',region:'APAC',country:'Japan',cat:'Hosting',vendor:'NTT DOCOMO',file:'PAS VMware 20260227.docx',services:['VMware Cloud Foundation','VMware vSphere Enterprise'],price:168400,year:2026,quarter:'Q1'},
-  {proj:'Panasonic',region:'APAC',country:'Japan',cat:'Hosting',vendor:'NTT DOCOMO',file:'PAS Netapp YN260303.pdf',services:['Cisco MDS9148T','NetApp AFF A30 HA System'],price:204800,year:2026,quarter:'Q1'},
-  {proj:'Panasonic',region:'APAC',country:'Japan',cat:'Hosting',vendor:'NTT DOCOMO',file:'PAS Oracle YN260313.pdf',services:['Oracle Database Appliance X11-L','Oracle Database Enterprise Edition'],price:286400,year:2026,quarter:'Q1'},
-  {proj:'Panasonic',region:'APAC',country:'Japan',cat:'Hosting',vendor:'NTT Data',file:'NTT VMWare Quote.docx',services:['VMware vSphere Enterprise','VMware Cloud Foundation'],price:152000,year:2025,quarter:'Q4'},
-  {proj:'Panasonic',region:'APAC',country:'Japan',cat:'Hosting',vendor:'Equinix',file:'TY10 5Cab 41kVA.pdf',services:['Colocation Power and Space','Internet Access'],price:124000,year:2026,quarter:'Q2'},
-  {proj:'Panasonic',region:'Global',country:'Multi-Region',cat:'M365 & Power Platform',vendor:'Microsoft',file:'Microsoft EA FINAL.xlsx',services:['M365 E5 License','Visio P1','Visio P2','Windows 365','Microsoft Defender','Power Platform'],price:248600,year:2025,quarter:'Q1'},
-  {proj:'Panasonic',region:'Global',country:'Multi-Region',cat:'M365 & Power Platform',vendor:'Microsoft',file:'PAS Tenant migration.pdf',services:['M365 E5 License','M365 E3 License','O365 E1 License'],price:186400,year:2025,quarter:'Q3'},
-  {proj:'Panasonic',region:'Global',country:'Multi-Region',cat:'M365 & Power Platform',vendor:'Microsoft',file:'PJ Star Phase 1.xlsb',services:['M365 E5 License','Power BI Premium','M365 Copilot','Microsoft Defender'],price:198600,year:2026,quarter:'Q1'},
-  {proj:'Panasonic',region:'Global',country:'Multi-Region',cat:'Service Management (SNow)',vendor:'ServiceNow',file:'OCTOBER ORDER FORM.pdf',services:['ServiceNow App Engine Enterprise','ServiceNow IT Service Management Professional','ServiceNow IT Operations Management'],price:312400,year:2024,quarter:'Q4'},
-  {proj:'Panasonic',region:'Global',country:'Multi-Region',cat:'Service Management (SNow)',vendor:'ServiceNow',file:'PAS Global IT ServiceNow v2.pptx',services:['ServiceNow IT Service Management Professional','ServiceNow App Engine Enterprise'],price:248600,year:2025,quarter:'Q1'},
-  {proj:'Idemia',region:'Americas',country:'United States',cat:'Network & Telecom',vendor:'CDW',file:'Idemia 3YEAR CDW 699074-5.pdf',services:['Cisco SMARTnet','Cisco Catalyst C8300','Cisco Catalyst 8500','Cisco Nexus 9300','Cisco Firepower 1150 NGFW'],price:188900,year:2024,quarter:'Q2'},
-  {proj:'Idemia',region:'Americas',country:'United States',cat:'Network & Telecom',vendor:'CDW',file:'Idemia 5YEAR CDW 699198-2.pdf',services:['Cisco SMARTnet','Cisco Catalyst C8300','Cisco Catalyst 8500','Cisco Nexus 9300','Cisco Firepower 1150 NGFW'],price:298400,year:2024,quarter:'Q2'},
-  {proj:'Idemia',region:'Americas',country:'United States',cat:'Network & Telecom',vendor:'PC Connection',file:'PCC Quote 13701189_01.pdf',services:['Cisco SMARTnet','Cisco Catalyst C8300','Cisco Catalyst 8500','Cisco Nexus 9300','Cisco Firepower 1150 NGFW'],price:148600,year:2024,quarter:'Q3'},
-  {proj:'Idemia',region:'Americas',country:'United States',cat:'Network & Telecom',vendor:'PC Connection',file:'PCC Quote 13797148_02.pdf',services:['Cisco SMARTnet','Cisco Catalyst C8300','Cisco Catalyst 8500','Cisco Nexus 9300'],price:162400,year:2024,quarter:'Q4'},
-  {proj:'Idemia',region:'Americas',country:'United States',cat:'Cybersecurity',vendor:'SHI',file:'SHI Quote-27008642 CyberArk.pdf',services:['CyberArk Secure IT Ops Standard','Privileged Access Management','CyberArk Endpoint Privilege Manager'],price:118500,year:2024,quarter:'Q1'},
-  {proj:'Idemia',region:'Americas',country:'United States',cat:'Cybersecurity',vendor:'SHI',file:'CyberArk SHI Quote-27337005.pdf',services:['CyberArk Secure IT Ops Standard','Privileged Access Management'],price:124300,year:2025,quarter:'Q1'},
-  {proj:'Idemia',region:'Americas',country:'United States',cat:'Cybersecurity',vendor:'SHI',file:'SHI Quote-25965921 Forescout NAC.pdf',services:['Forescout Network Access Control','Endpoint Visibility'],price:88700,year:2024,quarter:'Q2'},
-  {proj:'Idemia',region:'Americas',country:'United States',cat:'Hosting',vendor:'SHI',file:'SHI Quote-27339600.pdf',services:['Microsoft Windows Server Datacenter','Microsoft SQL Server Standard Core'],price:86400,year:2025,quarter:'Q1'},
-  {proj:'Idemia',region:'Americas',country:'United States',cat:'Hosting',vendor:'Honeywell',file:'DC BoM Honeywell.xlsx',services:['Cisco Nexus 9000','IBM Power9 Server','Pure Storage FlashArray','Data Center Build Services'],price:418000,year:2024,quarter:'Q3'},
-  {proj:'Tenneco',region:'Americas',country:'United States',cat:'M365 & Power Platform',vendor:'Copeland LP',file:'Copeland New EAS CPS.pdf',services:['M365 E5 License','Visio P1','Visio P2','Windows 365','Microsoft Defender','Power BI Premium'],price:312800,year:2024,quarter:'Q4'},
-  {proj:'Tenneco',region:'Americas',country:'United States',cat:'M365 & Power Platform',vendor:'Thrive',file:'2024-12-11 Resonant M365.pdf',services:['M365 E3 License','M365 F3 License','Teams Essentials','Power BI Pro','M365 Copilot'],price:142400,year:2024,quarter:'Q4'},
-  {proj:'Tenneco',region:'Americas',country:'United States',cat:'IdAM',vendor:'Quest',file:'Q-2221984 LUBRIZOL.pdf',services:['Quest On-Demand Migration Suite T5','Active Directory Migration','Quest Professional Services'],price:148600,year:2024,quarter:'Q2'},
-  {proj:'Tenneco',region:'Americas',country:'United States',cat:'IdAM',vendor:'Quest',file:'Lubrizol ODMT5 SOF03122026.pdf',services:['Quest On-Demand Migration Suite T5','Quest Professional Services'],price:136400,year:2026,quarter:'Q1'},
-  {proj:'Tenneco',region:'Americas',country:'United States',cat:'IdAM',vendor:'Quest',file:'ODM Suite T5 2026.4.3.docx',services:['Quest On-Demand Migration Suite T5'],price:128900,year:2026,quarter:'Q2'},
-  {proj:'Tenneco',region:'Americas',country:'United States',cat:'IdAM',vendor:'Quest',file:'AD Migration Consulting 2026.4.3.docx',services:['Active Directory Migration Consulting'],price:42000,year:2026,quarter:'Q2'},
-  {proj:'Tenneco',region:'Americas',country:'United States',cat:'IdAM',vendor:'Quest',file:'ODM M365 2026.4.3.docx',services:['Quest On-Demand Migration M365','Active Directory Migration'],price:98400,year:2026,quarter:'Q2'},
-  {proj:'Tenneco',region:'Americas',country:'United States',cat:'IdAM',vendor:'Proquire LLC',file:'Q-09148 PAS Quest ODMT5.pdf',services:['Quest On-Demand Migration Suite T5','Quest On-Demand Migration M365'],price:168200,year:2025,quarter:'Q1'}
+  // ===== PANASONIC - CYBERSECURITY =====
+  {proj:'Panasonic',region:'EMEA',country:'Germany',cat:'Cybersecurity',vendor:'TrendMicro',file:'Panasonic EU TrendMicro Endpoint.xlsx',
+    services:[
+      {name:'Trend Vision One Endpoint Security',sku:'TM-VO-EP-STD',qty:500,unitPrice:62.40},
+      {name:'Apex One SaaS',sku:'TM-APX-SAAS',qty:500,unitPrice:48.00},
+      {name:'Trend Micro Email Security Advanced',sku:'TM-EMS-ADV',qty:500,unitPrice:38.40},
+      {name:'Cloud App Security XDR',sku:'TM-CAS-XDR',qty:500,unitPrice:35.92}
+    ],price:92400,year:2024,quarter:'Q2'},
+  
+  {proj:'Panasonic',region:'APAC',country:'India',cat:'Cybersecurity',vendor:'TrendMicro',file:'Panasonic India TrendMicro.xlsx',
+    services:[
+      {name:'Trend Vision One Endpoint Security',sku:'TM-VO-EP-STD',qty:400,unitPrice:78.15},
+      {name:'Apex One SaaS',sku:'TM-APX-SAAS',qty:400,unitPrice:60.00},
+      {name:'Trend Micro Email Security Advanced',sku:'TM-EMS-ADV',qty:400,unitPrice:58.35}
+    ],price:78600,year:2024,quarter:'Q3'},
+  
+  {proj:'Panasonic',region:'APAC',country:'Malaysia',cat:'Cybersecurity',vendor:'TrendMicro',file:'Panasonic MY TrendMicro.xlsx',
+    services:[
+      {name:'Trend Vision One Endpoint Security',sku:'TM-VO-EP-STD',qty:350,unitPrice:122.00},
+      {name:'Trend Micro Email Security Advanced',sku:'TM-EMS-ADV',qty:350,unitPrice:81.43}
+    ],price:71200,year:2024,quarter:'Q3'},
+  
+  {proj:'Panasonic',region:'APAC',country:'Japan',cat:'Cybersecurity',vendor:'KnowBe4',file:'PASJ_KnowBe4_JUL2025.pdf',
+    services:[
+      {name:'KnowBe4 PhishER Subscription',sku:'KB4-PHR-SUB',qty:200,unitPrice:135.00},
+      {name:'Security Awareness Training',sku:'KB4-SAT-ENT',qty:200,unitPrice:94.00}
+    ],price:45800,year:2025,quarter:'Q3'},
+  
+  {proj:'Panasonic',region:'Global',country:'Multi-Region',cat:'Cybersecurity',vendor:'NTT Data',file:'PAS Zscaler Licenses 2026.pdf',
+    services:[
+      {name:'Zscaler ZIA Transformation Edition',sku:'ZS-ZIA-TRX',qty:1000,unitPrice:78.00},
+      {name:'Zero Trust Network Access',sku:'ZS-ZTNA-PRO',qty:1000,unitPrice:48.00},
+      {name:'Zscaler Internet Access',sku:'ZS-ZIA-PRO',qty:1000,unitPrice:30.00}
+    ],price:156000,year:2026,quarter:'Q1'},
+  
+  {proj:'Panasonic',region:'Global',country:'Multi-Region',cat:'Cybersecurity',vendor:'NTT Data',file:'PAS Zscaler 7Mo Annual.pdf',
+    services:[
+      {name:'Zscaler ZIA Transformation Edition',sku:'ZS-ZIA-TRX',qty:900,unitPrice:84.44},
+      {name:'Zero Trust Network Access',sku:'ZS-ZTNA-PRO',qty:900,unitPrice:73.33}
+    ],price:142000,year:2026,quarter:'Q2'},
+  
+  {proj:'Panasonic',region:'APAC',country:'Japan',cat:'Cybersecurity',vendor:'SHI',file:'PO PAS JD100 KnowBe4.pdf',
+    services:[
+      {name:'KnowBe4 PhishER Subscription',sku:'KB4-PHR-SUB',qty:220,unitPrice:130.00},
+      {name:'Security Awareness Training',sku:'KB4-SAT-ENT',qty:220,unitPrice:89.10}
+    ],price:48200,year:2026,quarter:'Q1'},
+
+  // ===== PANASONIC - NETWORK & TELECOM =====
+  {proj:'Panasonic',region:'EMEA',country:'Germany',cat:'Network & Telecom',vendor:'NTT Data',file:'NTT PAS Cisco Network Rev.1.pdf',
+    services:[
+      {name:'Cisco Catalyst C8300',sku:'C8300-1N1S-4T2X',qty:8,unitPrice:3200.00},
+      {name:'Cisco Catalyst 9800-L',sku:'C9800-L-F-K9',qty:4,unitPrice:5400.00},
+      {name:'Cisco Catalyst 9200-L',sku:'C9200L-48T-4G',qty:6,unitPrice:2100.00},
+      {name:'Cisco Wireless 9176I',sku:'C9176I-B-K9',qty:12,unitPrice:250.00}
+    ],price:62400,year:2025,quarter:'Q1'},
+  
+  {proj:'Panasonic',region:'APAC',country:'Singapore',cat:'Network & Telecom',vendor:'NTT Data',file:'PASAP NTT PAS Cisco Rev.3.pdf',
+    services:[
+      {name:'Cisco Catalyst C8300',sku:'C8300-1N1S-4T2X',qty:6,unitPrice:3400.00},
+      {name:'Cisco Catalyst 9800-L',sku:'C9800-L-F-K9',qty:3,unitPrice:5800.00},
+      {name:'Cisco Nexus 9200L',sku:'N9K-C92348GC',qty:4,unitPrice:4200.00},
+      {name:'Cisco Wireless 9176I',sku:'C9176I-B-K9',qty:15,unitPrice:280.00}
+    ],price:58900,year:2025,quarter:'Q2'},
+  
+  {proj:'Panasonic',region:'EMEA',country:'Germany',cat:'Network & Telecom',vendor:'NTT Data',file:'Langen PAS Cisco Switch.pdf',
+    services:[
+      {name:'Cisco Catalyst C8300',sku:'C8300-1N1S-4T2X',qty:10,unitPrice:3500.00},
+      {name:'Cisco Catalyst 9800-L',sku:'C9800-L-F-K9',qty:4,unitPrice:5500.00},
+      {name:'Cisco Catalyst 9400',sku:'C9400-LC-48UX',qty:3,unitPrice:4766.67}
+    ],price:71300,year:2025,quarter:'Q2'},
+  
+  {proj:'Panasonic',region:'EMEA',country:'Germany',cat:'Network & Telecom',vendor:'NTT Data',file:'Neumunster PAS Cisco.pdf',
+    services:[
+      {name:'Cisco Catalyst C8300',sku:'C8300-1N1S-4T2X',qty:6,unitPrice:3300.00},
+      {name:'Cisco Catalyst 9400',sku:'C9400-LC-48UX',qty:5,unitPrice:4960.00}
+    ],price:44600,year:2025,quarter:'Q1'},
+  
+  {proj:'Panasonic',region:'EMEA',country:'Germany',cat:'Network & Telecom',vendor:'NTT Data',file:'Ottobrunn PAS Cisco.pdf',
+    services:[
+      {name:'Cisco Catalyst C8300',sku:'C8300-1N1S-4T2X',qty:8,unitPrice:3600.00},
+      {name:'Cisco Wireless 9176I',sku:'C9176I-B-K9',qty:38,unitPrice:247.37}
+    ],price:38200,year:2025,quarter:'Q1'},
+  
+  {proj:'Panasonic',region:'EMEA',country:'Germany',cat:'Network & Telecom',vendor:'NTT Data',file:'Hamburg PAS Cisco.pdf',
+    services:[
+      {name:'Cisco Catalyst C8300',sku:'C8300-1N1S-4T2X',qty:9,unitPrice:3311.11}
+    ],price:29800,year:2025,quarter:'Q1'},
+  
+  {proj:'Panasonic',region:'APAC',country:'Malaysia',cat:'Network & Telecom',vendor:'NTT Data',file:'Malaysia PAS Cisco.pdf',
+    services:[
+      {name:'Cisco Catalyst C8300',sku:'C8300-1N1S-4T2X',qty:10,unitPrice:3210.00}
+    ],price:32100,year:2025,quarter:'Q4'},
+  
+  {proj:'Panasonic',region:'APAC',country:'India',cat:'Network & Telecom',vendor:'NTT Data',file:'India PAS 3rd Requirement.xlsx',
+    services:[
+      {name:'Cisco Catalyst C8300',sku:'C8300-1N1S-4T2X',qty:12,unitPrice:2900.00},
+      {name:'Cisco Catalyst 9800-L',sku:'C9800-L-F-K9',qty:3,unitPrice:5633.33}
+    ],price:51700,year:2025,quarter:'Q4'},
+  
+  {proj:'Panasonic',region:'APAC',country:'India',cat:'Network & Telecom',vendor:'NTT Data',file:'India 5th Req Additional AP.pdf',
+    services:[
+      {name:'Cisco Meraki MR46E',sku:'MR46E-HW',qty:46,unitPrice:400.00}
+    ],price:18400,year:2025,quarter:'Q4'},
+  
+  {proj:'Panasonic',region:'EMEA',country:'Germany',cat:'Network & Telecom',vendor:'NTT Data',file:'Quote 4633286 PA Ottobrunn.pdf',
+    services:[
+      {name:'Palo Alto PA 445',sku:'PAN-PA-445',qty:4,unitPrice:5500.00},
+      {name:'Palo Alto NGFW Firewall',sku:'PAN-NGFW-SUB',qty:4,unitPrice:1650.00}
+    ],price:28600,year:2025,quarter:'Q4'},
+  
+  {proj:'Panasonic',region:'APAC',country:'India',cat:'Network & Telecom',vendor:'NTT Data',file:'Gurgaon PA Proposal.pdf',
+    services:[
+      {name:'Palo Alto PA 445',sku:'PAN-PA-445',qty:4,unitPrice:5200.00},
+      {name:'Palo Alto NGFW Firewall',sku:'PAN-NGFW-SUB',qty:4,unitPrice:1525.00}
+    ],price:26900,year:2025,quarter:'Q4'},
+  
+  {proj:'Panasonic',region:'Global',country:'Multi-Region',cat:'Network & Telecom',vendor:'Equinix',file:'PAS Global Backbone.pdf',
+    services:[
+      {name:'Equinix Network Interconnect Lines',sku:'ECX-NIL-10G',qty:24,unitPrice:5000.00},
+      {name:'Global WAN Connectivity',sku:'ECX-GWAN-100',qty:8,unitPrice:8000.00}
+    ],price:184000,year:2024,quarter:'Q1'},
+  
+  {proj:'Panasonic',region:'Global',country:'Multi-Region',cat:'Network & Telecom',vendor:'Equinix',file:'PAS Cloud Network.pdf',
+    services:[
+      {name:'Equinix Network Interconnect Lines',sku:'ECX-NIL-10G',qty:18,unitPrice:5200.00},
+      {name:'Cloud Connectivity',sku:'ECX-CLOUD-EXC',qty:6,unitPrice:8166.67}
+    ],price:142600,year:2024,quarter:'Q2'},
+  
+  {proj:'Panasonic',region:'Global',country:'Multi-Region',cat:'Network & Telecom',vendor:'Equinix',file:'PAS Global WAN v4.pdf',
+    services:[
+      {name:'Equinix Network Interconnect Lines',sku:'ECX-NIL-10G',qty:26,unitPrice:5050.00},
+      {name:'Global WAN Connectivity',sku:'ECX-GWAN-100',qty:8,unitPrice:8137.50}
+    ],price:196300,year:2025,quarter:'Q1'},
+
+  // ===== PANASONIC - HOSTING =====
+  {proj:'Panasonic',region:'APAC',country:'Japan',cat:'Hosting',vendor:'NTT DOCOMO',file:'PAS VMware 20260227.docx',
+    services:[
+      {name:'VMware Cloud Foundation',sku:'VCF-ENT-PLUS',qty:48,unitPrice:2200.00},
+      {name:'VMware vSphere Enterprise',sku:'VS-ENT-PLUS',qty:48,unitPrice:1308.33}
+    ],price:168400,year:2026,quarter:'Q1'},
+  
+  {proj:'Panasonic',region:'APAC',country:'Japan',cat:'Hosting',vendor:'NTT DOCOMO',file:'PAS Netapp YN260303.pdf',
+    services:[
+      {name:'Cisco MDS9148T',sku:'DS-C9148T-K9',qty:4,unitPrice:18000.00},
+      {name:'NetApp AFF A30 HA System',sku:'NAF-A30-HA',qty:2,unitPrice:66400.00}
+    ],price:204800,year:2026,quarter:'Q1'},
+  
+  {proj:'Panasonic',region:'APAC',country:'Japan',cat:'Hosting',vendor:'NTT DOCOMO',file:'PAS Oracle YN260313.pdf',
+    services:[
+      {name:'Oracle Database Appliance X11-L',sku:'ODA-X11-L',qty:2,unitPrice:95000.00},
+      {name:'Oracle Database Enterprise Edition',sku:'ORA-DB-EE',qty:8,unitPrice:12050.00}
+    ],price:286400,year:2026,quarter:'Q1'},
+  
+  {proj:'Panasonic',region:'APAC',country:'Japan',cat:'Hosting',vendor:'NTT Data',file:'NTT VMWare Quote.docx',
+    services:[
+      {name:'VMware vSphere Enterprise',sku:'VS-ENT-PLUS',qty:60,unitPrice:1400.00},
+      {name:'VMware Cloud Foundation',sku:'VCF-ENT-PLUS',qty:32,unitPrice:2125.00}
+    ],price:152000,year:2025,quarter:'Q4'},
+  
+  {proj:'Panasonic',region:'APAC',country:'Japan',cat:'Hosting',vendor:'Equinix',file:'TY10 5Cab 41kVA.pdf',
+    services:[
+      {name:'Colocation Power and Space',sku:'EQX-COLO-5CAB',qty:5,unitPrice:18000.00},
+      {name:'Internet Access',sku:'EQX-INET-1G',qty:2,unitPrice:17000.00}
+    ],price:124000,year:2026,quarter:'Q2'},
+
+  // ===== PANASONIC - M365 =====
+  {proj:'Panasonic',region:'Global',country:'Multi-Region',cat:'M365 & Power Platform',vendor:'Microsoft',file:'Microsoft EA FINAL.xlsx',
+    services:[
+      {name:'M365 E5 License',sku:'CFQ7TTC0LF8R',qty:1500,unitPrice:57.00},
+      {name:'Visio P1',sku:'CFQ7TTC0LH3W',qty:300,unitPrice:5.00},
+      {name:'Visio P2',sku:'CFQ7TTC0LH3X',qty:200,unitPrice:15.00},
+      {name:'Windows 365',sku:'CFQ7TTC0HHS9',qty:500,unitPrice:33.00},
+      {name:'Microsoft Defender',sku:'CFQ7TTC0LH04',qty:1500,unitPrice:35.00},
+      {name:'Power Platform',sku:'CFQ7TTC0LH1F',qty:200,unitPrice:160.00}
+    ],price:248600,year:2025,quarter:'Q1'},
+  
+  {proj:'Panasonic',region:'Global',country:'Multi-Region',cat:'M365 & Power Platform',vendor:'Microsoft',file:'PAS Tenant migration.pdf',
+    services:[
+      {name:'M365 E5 License',sku:'CFQ7TTC0LF8R',qty:1200,unitPrice:57.00},
+      {name:'M365 E3 License',sku:'CFQ7TTC0LF8Q',qty:2400,unitPrice:36.00},
+      {name:'O365 E1 License',sku:'CFQ7TTC0LH26',qty:1600,unitPrice:18.00}
+    ],price:186400,year:2025,quarter:'Q3'},
+  
+  {proj:'Panasonic',region:'Global',country:'Multi-Region',cat:'M365 & Power Platform',vendor:'Microsoft',file:'PJ Star Phase 1.xlsb',
+    services:[
+      {name:'M365 E5 License',sku:'CFQ7TTC0LF8R',qty:1400,unitPrice:57.00},
+      {name:'Power BI Premium',sku:'CFQ7TTC0LH1H',qty:80,unitPrice:240.00},
+      {name:'M365 Copilot',sku:'CFQ7TTC0LCH4',qty:400,unitPrice:80.00},
+      {name:'Microsoft Defender',sku:'CFQ7TTC0LH04',qty:1400,unitPrice:34.00}
+    ],price:198600,year:2026,quarter:'Q1'},
+
+  // ===== PANASONIC - SERVICE MANAGEMENT =====
+  {proj:'Panasonic',region:'Global',country:'Multi-Region',cat:'Service Management (SNow)',vendor:'ServiceNow',file:'OCTOBER ORDER FORM.pdf',
+    services:[
+      {name:'ServiceNow App Engine Enterprise',sku:'SN-AE-ENT',qty:50,unitPrice:2400.00},
+      {name:'ServiceNow IT Service Management Professional',sku:'SN-ITSM-PRO',qty:1200,unitPrice:120.00},
+      {name:'ServiceNow IT Operations Management',sku:'SN-ITOM-PRO',qty:200,unitPrice:240.00}
+    ],price:312400,year:2024,quarter:'Q4'},
+  
+  {proj:'Panasonic',region:'Global',country:'Multi-Region',cat:'Service Management (SNow)',vendor:'ServiceNow',file:'PAS Global IT ServiceNow v2.pptx',
+    services:[
+      {name:'ServiceNow IT Service Management Professional',sku:'SN-ITSM-PRO',qty:1100,unitPrice:130.00},
+      {name:'ServiceNow App Engine Enterprise',sku:'SN-AE-ENT',qty:45,unitPrice:2358.89}
+    ],price:248600,year:2025,quarter:'Q1'},
+
+  // ===== IDEMIA - NETWORK =====
+  {proj:'Idemia',region:'Americas',country:'United States',cat:'Network & Telecom',vendor:'CDW',file:'Idemia 3YEAR CDW 699074-5.pdf',
+    services:[
+      {name:'Cisco SMARTnet',sku:'CON-SNT-CAT',qty:36,unitPrice:850.00},
+      {name:'Cisco Catalyst C8300',sku:'C8300-1N1S-4T2X',qty:14,unitPrice:3500.00},
+      {name:'Cisco Catalyst 8500',sku:'C8500-12X',qty:6,unitPrice:8500.00},
+      {name:'Cisco Nexus 9300',sku:'N9K-C9336C-FX2',qty:4,unitPrice:9000.00},
+      {name:'Cisco Firepower 1150 NGFW',sku:'FPR1150-NGFW-K9',qty:6,unitPrice:6716.67}
+    ],price:188900,year:2024,quarter:'Q2'},
+  
+  {proj:'Idemia',region:'Americas',country:'United States',cat:'Network & Telecom',vendor:'CDW',file:'Idemia 5YEAR CDW 699198-2.pdf',
+    services:[
+      {name:'Cisco SMARTnet',sku:'CON-SNT-CAT',qty:60,unitPrice:850.00},
+      {name:'Cisco Catalyst C8300',sku:'C8300-1N1S-4T2X',qty:14,unitPrice:3600.00},
+      {name:'Cisco Catalyst 8500',sku:'C8500-12X',qty:6,unitPrice:9000.00},
+      {name:'Cisco Nexus 9300',sku:'N9K-C9336C-FX2',qty:4,unitPrice:9500.00},
+      {name:'Cisco Firepower 1150 NGFW',sku:'FPR1150-NGFW-K9',qty:6,unitPrice:13066.67}
+    ],price:298400,year:2024,quarter:'Q2'},
+  
+  {proj:'Idemia',region:'Americas',country:'United States',cat:'Network & Telecom',vendor:'PC Connection',file:'PCC Quote 13701189_01.pdf',
+    services:[
+      {name:'Cisco SMARTnet',sku:'CON-SNT-CAT',qty:36,unitPrice:720.00},
+      {name:'Cisco Catalyst C8300',sku:'C8300-1N1S-4T2X',qty:14,unitPrice:2900.00},
+      {name:'Cisco Catalyst 8500',sku:'C8500-12X',qty:5,unitPrice:7800.00},
+      {name:'Cisco Nexus 9300',sku:'N9K-C9336C-FX2',qty:3,unitPrice:8500.00},
+      {name:'Cisco Firepower 1150 NGFW',sku:'FPR1150-NGFW-K9',qty:5,unitPrice:5500.00}
+    ],price:148600,year:2024,quarter:'Q3'},
+  
+  {proj:'Idemia',region:'Americas',country:'United States',cat:'Network & Telecom',vendor:'PC Connection',file:'PCC Quote 13797148_02.pdf',
+    services:[
+      {name:'Cisco SMARTnet',sku:'CON-SNT-CAT',qty:42,unitPrice:780.00},
+      {name:'Cisco Catalyst C8300',sku:'C8300-1N1S-4T2X',qty:14,unitPrice:3100.00},
+      {name:'Cisco Catalyst 8500',sku:'C8500-12X',qty:6,unitPrice:8400.00},
+      {name:'Cisco Nexus 9300',sku:'N9K-C9336C-FX2',qty:4,unitPrice:8950.00}
+    ],price:162400,year:2024,quarter:'Q4'},
+
+  // ===== IDEMIA - CYBERSECURITY =====
+  {proj:'Idemia',region:'Americas',country:'United States',cat:'Cybersecurity',vendor:'SHI',file:'SHI Quote-27008642 CyberArk.pdf',
+    services:[
+      {name:'CyberArk Secure IT Ops Standard',sku:'CYB-SIO-STD',qty:300,unitPrice:200.00},
+      {name:'Privileged Access Management',sku:'CYB-PAM-CORE',qty:150,unitPrice:280.00},
+      {name:'CyberArk Endpoint Privilege Manager',sku:'CYB-EPM-STD',qty:500,unitPrice:33.00}
+    ],price:118500,year:2024,quarter:'Q1'},
+  
+  {proj:'Idemia',region:'Americas',country:'United States',cat:'Cybersecurity',vendor:'SHI',file:'CyberArk SHI Quote-27337005.pdf',
+    services:[
+      {name:'CyberArk Secure IT Ops Standard',sku:'CYB-SIO-STD',qty:320,unitPrice:210.00},
+      {name:'Privileged Access Management',sku:'CYB-PAM-CORE',qty:160,unitPrice:357.50}
+    ],price:124300,year:2025,quarter:'Q1'},
+  
+  {proj:'Idemia',region:'Americas',country:'United States',cat:'Cybersecurity',vendor:'SHI',file:'SHI Quote-25965921 Forescout NAC.pdf',
+    services:[
+      {name:'Forescout Network Access Control',sku:'FS-NAC-ENT',qty:1000,unitPrice:65.00},
+      {name:'Endpoint Visibility',sku:'FS-EV-PRO',qty:1000,unitPrice:23.70}
+    ],price:88700,year:2024,quarter:'Q2'},
+
+  // ===== IDEMIA - HOSTING =====
+  {proj:'Idemia',region:'Americas',country:'United States',cat:'Hosting',vendor:'SHI',file:'SHI Quote-27339600.pdf',
+    services:[
+      {name:'Microsoft Windows Server Datacenter',sku:'MSFT-WS-DC',qty:24,unitPrice:2400.00},
+      {name:'Microsoft SQL Server Standard Core',sku:'MSFT-SQL-STD',qty:48,unitPrice:600.00}
+    ],price:86400,year:2025,quarter:'Q1'},
+  
+  {proj:'Idemia',region:'Americas',country:'United States',cat:'Hosting',vendor:'Honeywell',file:'DC BoM Honeywell.xlsx',
+    services:[
+      {name:'Cisco Nexus 9000',sku:'N9K-C9504',qty:4,unitPrice:35000.00},
+      {name:'IBM Power9 Server',sku:'IBM-P9-S922',qty:2,unitPrice:90000.00},
+      {name:'Pure Storage FlashArray',sku:'PS-FA-X70',qty:2,unitPrice:48000.00},
+      {name:'Data Center Build Services',sku:'DC-BUILD-SVC',qty:1,unitPrice:2000.00}
+    ],price:418000,year:2024,quarter:'Q3'},
+
+  // ===== TENNECO - M365 =====
+  {proj:'Tenneco',region:'Americas',country:'United States',cat:'M365 & Power Platform',vendor:'Copeland LP',file:'Copeland New EAS CPS.pdf',
+    services:[
+      {name:'M365 E5 License',sku:'CFQ7TTC0LF8R',qty:2000,unitPrice:60.00},
+      {name:'Visio P1',sku:'CFQ7TTC0LH3W',qty:400,unitPrice:6.00},
+      {name:'Visio P2',sku:'CFQ7TTC0LH3X',qty:300,unitPrice:18.00},
+      {name:'Windows 365',sku:'CFQ7TTC0HHS9',qty:600,unitPrice:35.00},
+      {name:'Microsoft Defender',sku:'CFQ7TTC0LH04',qty:2000,unitPrice:36.00},
+      {name:'Power BI Premium',sku:'CFQ7TTC0LH1H',qty:100,unitPrice:240.00}
+    ],price:312800,year:2024,quarter:'Q4'},
+  
+  {proj:'Tenneco',region:'Americas',country:'United States',cat:'M365 & Power Platform',vendor:'Thrive',file:'2024-12-11 Resonant M365.pdf',
+    services:[
+      {name:'M365 E3 License',sku:'CFQ7TTC0LF8Q',qty:1500,unitPrice:38.00},
+      {name:'M365 F3 License',sku:'CFQ7TTC0LH05',qty:800,unitPrice:9.00},
+      {name:'Teams Essentials',sku:'CFQ7TTC0J5BK',qty:600,unitPrice:5.00},
+      {name:'Power BI Pro',sku:'CFQ7TTC0LH1G',qty:400,unitPrice:14.00},
+      {name:'M365 Copilot',sku:'CFQ7TTC0LCH4',qty:300,unitPrice:80.00}
+    ],price:142400,year:2024,quarter:'Q4'},
+
+  // ===== TENNECO - IDAM =====
+  {proj:'Tenneco',region:'Americas',country:'United States',cat:'IdAM',vendor:'Quest',file:'Q-2221984 LUBRIZOL.pdf',
+    services:[
+      {name:'Quest On-Demand Migration Suite T5',sku:'QST-ODMT5',qty:5000,unitPrice:18.00},
+      {name:'Active Directory Migration',sku:'QST-AD-MIG',qty:5000,unitPrice:6.50},
+      {name:'Quest Professional Services',sku:'QST-PS-CONS',qty:160,unitPrice:160.00}
+    ],price:148600,year:2024,quarter:'Q2'},
+  
+  {proj:'Tenneco',region:'Americas',country:'United States',cat:'IdAM',vendor:'Quest',file:'Lubrizol ODMT5 SOF03122026.pdf',
+    services:[
+      {name:'Quest On-Demand Migration Suite T5',sku:'QST-ODMT5',qty:5500,unitPrice:18.50},
+      {name:'Quest Professional Services',sku:'QST-PS-CONS',qty:200,unitPrice:173.50}
+    ],price:136400,year:2026,quarter:'Q1'},
+  
+  {proj:'Tenneco',region:'Americas',country:'United States',cat:'IdAM',vendor:'Quest',file:'ODM Suite T5 2026.4.3.docx',
+    services:[
+      {name:'Quest On-Demand Migration Suite T5',sku:'QST-ODMT5',qty:6000,unitPrice:21.48}
+    ],price:128900,year:2026,quarter:'Q2'},
+  
+  {proj:'Tenneco',region:'Americas',country:'United States',cat:'IdAM',vendor:'Quest',file:'AD Migration Consulting 2026.4.3.docx',
+    services:[
+      {name:'Active Directory Migration Consulting',sku:'QST-AD-CONS',qty:240,unitPrice:175.00}
+    ],price:42000,year:2026,quarter:'Q2'},
+  
+  {proj:'Tenneco',region:'Americas',country:'United States',cat:'IdAM',vendor:'Quest',file:'ODM M365 2026.4.3.docx',
+    services:[
+      {name:'Quest On-Demand Migration M365',sku:'QST-ODM-M365',qty:4000,unitPrice:18.00},
+      {name:'Active Directory Migration',sku:'QST-AD-MIG',qty:4000,unitPrice:6.60}
+    ],price:98400,year:2026,quarter:'Q2'},
+  
+  {proj:'Tenneco',region:'Americas',country:'United States',cat:'IdAM',vendor:'Proquire LLC',file:'Q-09148 PAS Quest ODMT5.pdf',
+    services:[
+      {name:'Quest On-Demand Migration Suite T5',sku:'QST-ODMT5',qty:6500,unitPrice:16.00},
+      {name:'Quest On-Demand Migration M365',sku:'QST-ODM-M365',qty:3500,unitPrice:18.34}
+    ],price:168200,year:2025,quarter:'Q1'}
 ];
 
 const DEMO_DB=[...RAW];      // Pristine copy of demo data
@@ -1823,13 +2106,13 @@ function selFilterChips(){
   const cat=document.getElementById('sel-cat').value;
   const s=document.getElementById('sel-search').value.toLowerCase();
   const pool=filteredDB();
-  let svcs=[...new Set(pool.flatMap(r=>r.services||[]))].sort();
-  if(cat!=='All')svcs=svcs.filter(v=>pool.some(r=>r.cat===cat&&(r.services||[]).includes(v)));
+  let svcs=[...new Set(pool.flatMap(r=>getSvcNames(r)))].sort();
+  if(cat!=='All')svcs=svcs.filter(v=>pool.some(r=>r.cat===cat&&hasService(r,v)));
   if(s)svcs=svcs.filter(v=>v.toLowerCase().includes(s));
   document.getElementById('sel-chips').innerHTML=svcs.map(v=>{
-    const c=pool.find(r=>(r.services||[]).includes(v))?.cat;
+    const c=pool.find(r=>hasService(r,v))?.cat;
     const on=selSvcs.has(v);
-    const qCount=pool.filter(r=>(r.services||[]).includes(v)).length;
+    const qCount=pool.filter(r=>hasService(r,v)).length;
     return `<div class="chip ${on?'on':''}" onclick="togSelSvc('${esc(v).replace(/'/g,"\\'")}',this)" title="${qCount} historical quote${qCount>1?'s':''}"><span class="cat-dot" style="background:${CAT_COL[c]||MID}"></span>${esc(v.length>28?v.substring(0,28)+'…':v)}<span class="chip-cnt">${qCount}</span></div>`;
   }).join('');
 }
@@ -1867,8 +2150,8 @@ function selRender(){
   document.getElementById('sel-results').style.display='block';
 
   const pool=filteredDB();
-  const matches=pool.filter(r=>sel.some(s=>(r.services||[]).includes(s)));
-  const allMatch=pool.filter(r=>sel.every(s=>(r.services||[]).includes(s)));
+  const matches=pool.filter(r=>sel.some(s=>hasService(r,s)));
+  const allMatch=pool.filter(r=>sel.every(s=>hasService(r,s)));
   const partialMatch=matches.filter(r=>!allMatch.includes(r));
 
   const verdictEl=document.getElementById('sel-verdict');
@@ -1914,7 +2197,7 @@ function selRender(){
   else{
     const comboMap={};
     matches.forEach(r=>{
-      const matchedSvcs=sel.filter(s=>(r.services||[]).includes(s)).sort();
+      const matchedSvcs=sel.filter(s=>hasService(r,s)).sort();
       if(matchedSvcs.length===0)return;
       const key=matchedSvcs.join(' + ');
       if(!comboMap[key]){comboMap[key]={svcs:matchedSvcs,vendors:{}};}
@@ -1982,7 +2265,7 @@ function selRender(){
   activeSel.forEach(s=>{
     svcPrices[s]={};
     vens.forEach(v=>{
-      const allQuotes=matches.filter(r=>r.vendor===v&&(r.services||[]).includes(s)&&r.price>0);
+      const allQuotes=matches.filter(r=>r.vendor===v&&hasService(r,s)&&r.price>0);
       if(allQuotes.length===0){svcPrices[s][v]=null;}
       else{
         const ps=allQuotes.map(r=>r.price);
@@ -2040,10 +2323,10 @@ function selRender(){
   }
   
   const allPool=filteredDB();
-  const allMatches=allPool.filter(r=>sel.some(s=>(r.services||[]).includes(s)));
+  const allMatches=allPool.filter(r=>sel.some(s=>hasService(r,s)));
   const venCombos={};
   allMatches.forEach(r=>{
-    const matched=sel.filter(s=>(r.services||[]).includes(s)).sort();
+    const matched=sel.filter(s=>hasService(r,s)).sort();
     if(matched.length<=1||matched.length===sel.length)return;
     if(!venCombos[r.vendor])venCombos[r.vendor]={};
     const key=matched.join(' + ');
@@ -2083,7 +2366,7 @@ function selRender(){
   });
   
   sel.forEach(s=>{
-    const singleQuotes=allPool.filter(r=>(r.services||[]).includes(s)&&r.price>0);
+    const singleQuotes=allPool.filter(r=>hasService(r,s)&&r.price>0);
     if(singleQuotes.length===0){
       sourcingStrategies.push({type:'none',label:'❌ INDIVIDUAL SERVICE',svcs:[s],vendor:null,price:0,recommendation:'No historical data — issue fresh RFQ'});
     } else {
@@ -2143,7 +2426,7 @@ function renderSelSvcBreakdown(sel,pool){
   const el=document.getElementById('sel-svc-breakdown');
   if(!el)return;
   const breakdownHtml=sel.map(s=>{
-    const quotes=pool.filter(r=>(r.services||[]).includes(s));
+    const quotes=pool.filter(r=>hasService(r,s));
     if(quotes.length===0){
       return `<div style="padding:14px;background:var(--bg);border-radius:var(--r);margin-bottom:10px;border-left:3px solid var(--rd)">
         <div style="font-weight:700;color:var(--ink);font-size:.88rem;margin-bottom:4px">${esc(s)}</div>
@@ -2222,7 +2505,7 @@ function toggleSvcBD(uid){
   
 function selShowQuote(v,s){
   const pool=filteredDB();
-  const rs=pool.filter(r=>r.vendor===v&&(r.services||[]).includes(s));
+  const rs=pool.filter(r=>r.vendor===v&&hasService(r,s));
   if(rs.length===0)return;
   const r=rs[0];
   const panel=document.getElementById('sp-panel');
@@ -2309,7 +2592,7 @@ function selOpenMtxFilter(type){
   const chips=document.getElementById('sel-mtx-filter-chips');
   const pool=filteredDB();
   const sel=[...selSvcs];
-  const matches=pool.filter(r=>sel.some(s=>(r.services||[]).includes(s)));
+  const matches=pool.filter(r=>sel.some(s=>hasService(r,s)));
   
   if(type==='ven'){
     title.textContent='🏢 Filter Vendors';
@@ -2322,7 +2605,7 @@ function selOpenMtxFilter(type){
   } else {
     title.textContent='🧩 Filter Services';
     chips.innerHTML=sel.map(s=>{
-      const c=pool.find(r=>(r.services||[]).includes(s))?.cat;
+      const c=pool.find(r=>hasService(r,s))?.cat;
       const on=selMtxSvcs.has(s);
       return `<div class="chip ${on?'on':''}" onclick="togSelMtxSvc('${esc(s).replace(/'/g,"\\'")}',this)"><span class="cat-dot" style="background:${CAT_COL[c]||MID}"></span>${esc(s.length>28?s.substring(0,28)+'…':s)}</div>`;
     }).join('');
@@ -2354,13 +2637,13 @@ function selResetMtxFilters(){
 function selExport(){
   const sel=[...selSvcs];
   const pool=filteredDB();
-  const matches=pool.filter(r=>sel.some(s=>(r.services||[]).includes(s)));
+  const matches=pool.filter(r=>sel.some(s=>hasService(r,s)));
   const vens=[...new Set(matches.map(r=>r.vendor))];
   let csv='Service,'+vens.map(v=>'"'+v+'"').join(',')+'\n';
   sel.forEach(s=>{
     const row=['"'+s+'"'];
     vens.forEach(v=>{
-      const q=matches.find(r=>r.vendor===v&&(r.services||[]).includes(s));
+      const q=matches.find(r=>r.vendor===v&&hasService(r,s));
       row.push(q?q.price:'');
     });
     csv+=row.join(',')+'\n';
@@ -2378,11 +2661,11 @@ function selBuildRFQ(){
 function inFilterSvc(){
   const cat=document.getElementById('in-cat').value;
   const s=document.getElementById('in-svc-s').value.toLowerCase();
-  let svcs=[...new Set(DB.flatMap(r=>r.services||[]))].sort();
-  if(cat!=='All')svcs=svcs.filter(v=>DB.some(r=>r.cat===cat&&(r.services||[]).includes(v)));
+  let svcs=[...new Set(DB.flatMap(r=>getSvcNames(r)))].sort();
+  if(cat!=='All')svcs=svcs.filter(v=>DB.some(r=>r.cat===cat&&hasService(r,v)));
   if(s)svcs=svcs.filter(v=>v.toLowerCase().includes(s));
   document.getElementById('in-svcs').innerHTML=svcs.map(v=>{
-    const c=DB.find(r=>(r.services||[]).includes(v))?.cat;
+    const c=DB.find(r=>hasService(r,v))?.cat;
     const on=inSvcs.has(v);
     return `<div class="chip ${on?'on':''}" onclick="togInSvc('${esc(v).replace(/'/g,"\\'")}',this)"><span class="cat-dot" style="background:${CAT_COL[c]||MID}"></span>${esc(v.length>28?v.substring(0,28)+'…':v)}</div>`;
   }).join('');
@@ -2466,7 +2749,7 @@ function scoreQuote(){
   document.getElementById('ex-empty').style.display='none';
   document.getElementById('ex-results').style.display='block';
 
-  let pool=DB.filter(r=>sel.some(s=>(r.services||[]).includes(s))&&r.price>0);
+  let pool=DB.filter(r=>sel.some(s=>hasService(r,s))&&r.price>0);
   if(proj!=='All')pool=pool.filter(r=>r.proj===proj);
   const prices=pool.map(r=>r.price);
   const min=prices.length?Math.min(...prices):0;
@@ -2495,8 +2778,8 @@ function scoreQuote(){
   renderExSvcComparison(sel,p,proj);
 
   const comboEl=document.getElementById('ex-combo-body');
-    const allMatch=pool.filter(r=>sel.every(s=>(r.services||[]).includes(s)));
-    const supersetMatch=DB.filter(r=>sel.every(s=>(r.services||[]).includes(s))&&r.price>0);
+    const allMatch=pool.filter(r=>sel.every(s=>hasService(r,s)));
+    const supersetMatch=DB.filter(r=>sel.every(s=>hasService(r,s))&&r.price>0);
     set('ex-combo-meta',allMatch.length+' exact match · '+supersetMatch.length+' total');
     
     if(allMatch.length===0&&supersetMatch.length===0){
@@ -2585,7 +2868,7 @@ function scoreQuote(){
   const priorEl=document.querySelector('#ex-prior-table tbody');
   set('ex-prior-meta',pool.length+' prior');
   priorEl.innerHTML=pool.slice(0,20).sort((a,b)=>a.price-b.price).map(r=>{
-    const matched=sel.filter(s=>(r.services||[]).includes(s)).length;
+    const matched=sel.filter(s=>hasService(r,s)).length;
     const diff=((r.price-p)/p*100).toFixed(1);
     return `<tr style="cursor:pointer" onclick="selShowQuote('${esc(r.vendor).replace(/'/g,"\\'")}','${esc((r.services||[]).find(s=>sel.includes(s))||'').replace(/'/g,"\\'")}')">
       <td>${vbadge(r.vendor)}</td>
@@ -2699,7 +2982,7 @@ function renderExSvcComparison(sel,yourTotalPrice,proj){
   const yourPerSvcEstimate=yourTotalPrice/sel.length;
   
   const html=sel.map(s=>{
-    let pool=DB.filter(r=>(r.services||[]).includes(s)&&r.price>0);
+    let pool=DB.filter(r=>hasService(r,s)&&r.price>0);
     if(proj!=='All')pool=pool.filter(r=>r.proj===proj);
     
     if(pool.length===0){
@@ -2868,11 +3151,11 @@ function rqSetCat(c){rqCat=c;rqBuildCatList();rqFilterSvc();}
 
 function rqFilterSvc(){
   const s=document.getElementById('rq-svc-s').value.toLowerCase();
-  let svcs=[...new Set(DB.flatMap(r=>r.services||[]))].sort();
-  if(rqCat!=='All')svcs=svcs.filter(v=>DB.some(r=>r.cat===rqCat&&(r.services||[]).includes(v)));
+  let svcs=[...new Set(DB.flatMap(r=>getSvcNames(r)))].sort();
+  if(rqCat!=='All')svcs=svcs.filter(v=>DB.some(r=>r.cat===rqCat&&hasService(r,v)));
   if(s)svcs=svcs.filter(v=>v.toLowerCase().includes(s));
   document.getElementById('rq-svcs').innerHTML=svcs.map(v=>{
-    const c=DB.find(r=>(r.services||[]).includes(v))?.cat;
+    const c=DB.find(r=>hasService(r,v))?.cat;
     const on=rqSvcs.has(v);
     return `<div class="chip ${on?'on':''}" onclick="togRqSvc('${esc(v).replace(/'/g,"\\'")}',this)"><span class="cat-dot" style="background:${CAT_COL[c]||MID}"></span>${esc(v.length>28?v.substring(0,28)+'…':v)}</div>`;
   }).join('');
@@ -2918,7 +3201,7 @@ function rqRender(){
   const proj=document.getElementById('rq-proj').value;
   const users=parseInt(document.getElementById('rq-users').value)||2000;
   const term=parseInt(document.getElementById('rq-term').value)||3;
-  let pool=DB.filter(r=>sel.some(s=>(r.services||[]).includes(s))&&r.price>0);
+  let pool=DB.filter(r=>sel.some(s=>hasService(r,s))&&r.price>0);
   if(proj!=='All')pool=pool.filter(r=>r.proj===proj);
 
   const matchedCount=pool.length;
@@ -2945,12 +3228,12 @@ function rqRender(){
 
   set('rq-prior-meta',matchedCount+' prior quotes');
   document.querySelector('#rq-prior-table tbody').innerHTML=pool.slice(0,20).sort((a,b)=>a.price-b.price).map(r=>{
-    const matched=sel.filter(s=>(r.services||[]).includes(s)).length;
+    const matched=sel.filter(s=>hasService(r,s)).length;
     return `<tr><td>${vbadge(r.vendor)}</td><td>${esc(r.proj)}</td><td><span class="b nt">${matched}/${sel.length}</span></td><td class="num">${fmt(r.price)}</td><td>${r.year}${r.quarter||''}</td><td style="font-size:.70rem;color:var(--mid)">${esc(r.file.substring(0,24))}${r.file.length>24?'…':''}</td></tr>`;
   }).join('');
 
   const svcStats=sel.map(s=>{
-    const rs=pool.filter(r=>(r.services||[]).includes(s));
+    const rs=pool.filter(r=>hasService(r,s));
     const ps=rs.map(r=>r.price);
     const mn=ps.length?Math.min(...ps):0;
     const mx=ps.length?Math.max(...ps):0;
@@ -3077,7 +3360,7 @@ function generateAnswer(q){
   const ql=q.toLowerCase();
   const data=DB;
   if(ql.includes('zscaler')){
-    const zs=data.filter(r=>r.services.some(s=>s.toLowerCase().includes('zscaler')));
+    const zs=data.filter(r=>getSvcNames(r).some(s=>s.toLowerCase().includes('zscaler')));
     if(zs.length===0)return 'No Zscaler quotes found.';
     const best=zs.sort((a,b)=>a.price-b.price)[0];
     return `**Zscaler Pricing Analysis:** Found ${zs.length} Zscaler quotes. Best price: **${fmt(best.price)}** from **${best.vendor}** (${best.file}). Average: ${fmt(zs.reduce((a,b)=>a+b.price,0)/zs.length)}. NTT Data is your primary Zscaler reseller.`;
