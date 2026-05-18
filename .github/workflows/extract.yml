@@ -1,0 +1,95 @@
+name: Extract Quotes
+
+on:
+  push:
+    paths:
+      - 'quotes/**'
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * 1-5'  # 6 AM UTC weekdays
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r extractor/requirements.txt
+      
+      # ════════════════════════════════════════════════════════
+      # STAGE 1: Local extraction (LlamaParse + heuristic)
+      # ════════════════════════════════════════════════════════
+      - name: Stage 1 — Local extraction (regex/heuristic)
+        id: extract
+        run: |
+          python -m extractor.main --skip-ai --force
+        env:
+          LLAMA_CLOUD_API_KEY: ${{ secrets.LLAMA_API_KEY }}
+        continue-on-error: true
+      
+      - name: Commit extracted catalog (Stage 1)
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add catalog_data.json catalog_flat.json catalog_stats.json .extraction_state.json 2>/dev/null || true
+          if git diff --staged --quiet; then
+            echo "ℹ️  No new extractions to commit"
+          else
+            git commit -m "🤖 Stage 1: Extract new quotes [skip ci]"
+            git push
+          fi
+      
+      # ════════════════════════════════════════════════════════
+      # STAGE 2: AI validation pass (xAI Grok)
+      # ════════════════════════════════════════════════════════
+      - name: Stage 2 — AI validation pass
+        id: validate
+        if: steps.extract.outcome == 'success'
+        run: |
+          python -m extractor.ai_validator
+        env:
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+        continue-on-error: true
+      
+      - name: Commit AI validation results (Stage 2)
+        if: steps.validate.outcome == 'success'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add catalog_data.json validation_report.json 2>/dev/null || true
+          if git diff --staged --quiet; then
+            echo "ℹ️  No AI corrections to commit"
+          else
+            git commit -m "🤖 Stage 2: AI validation corrections [skip ci]"
+            git push
+          fi
+      
+      # ════════════════════════════════════════════════════════
+      # FINAL STATUS
+      # ════════════════════════════════════════════════════════
+      - name: Final status
+        run: |
+          if [ "${{ steps.extract.outcome }}" == "success" ]; then
+            echo "✅ Stage 1 (local extraction): SUCCESS"
+          else
+            echo "❌ Stage 1 (local extraction): FAILED"
+          fi
+          if [ "${{ steps.validate.outcome }}" == "success" ]; then
+            echo "✅ Stage 2 (AI validation): SUCCESS"
+          elif [ "${{ steps.validate.outcome }}" == "skipped" ]; then
+            echo "⏭️  Stage 2 (AI validation): SKIPPED"
+          else
+            echo "❌ Stage 2 (AI validation): FAILED"
+          fi
