@@ -47,37 +47,42 @@ def find_quote_files(quotes_dir: str = None) -> list:
     return sorted(files)
 
 def run_hybrid_pipeline(files: list) -> list:
-    """Process B: heuristic → validate → enrich"""
+    """Process B: heuristic → LLM validate → AI categorize → web enrich"""
     from heuristic_extractor import extract_chunks
     from ai_validator import validate_batch
+    from ai_categorizer import categorize_services, apply_categorizations
+    from llm_router import ROUTER
     
-    print(f'\n📄 Step 1/3: Heuristic extraction ({len(files)} files)')
+    print(f'\n📄 Step 1/4: Heuristic extraction ({len(files)} files)')
     chunks = []
     for i, fp in enumerate(files):
         print(f'  [{i+1}/{len(files)}] {os.path.basename(fp)}')
         try:
-            chunk = extract_chunks(fp)
-            chunks.append(chunk)
+            chunks.append(extract_chunks(fp))
         except Exception as e:
             print(f'    ❌ Failed: {e}')
-            chunks.append({'file': os.path.basename(fp), 'extraction_status': 'failed', 'reason': str(e)})
+            chunks.append({'file': os.path.basename(fp),
+                          'extraction_status': 'failed', 'reason': str(e)})
     
-    print(f'\n🧠 Step 2/3: LLM validation')
+    print(f'\n🧠 Step 2/4: LLM validation (auto-failover Groq → Llama → OpenAI)')
     validated = validate_batch(chunks)
+    print(f'\n{ROUTER.stats()}')
     
-    print(f'\n🌐 Step 3/3: Web price enrichment (optional, slow)')
-    # Enable web enrichment only if you want it (it's slow)
-    ENABLE_WEB_ENRICH = os.getenv('ENABLE_WEB_ENRICH', 'false').lower() == 'true'
-    if ENABLE_WEB_ENRICH:
+    print(f'\n🏷️  Step 3/4: AI categorization (services → categories/subcategories)')
+    cat_lookup = categorize_services(validated)
+    validated = apply_categorizations(validated, cat_lookup)
+    print(f'  ✅ Categorized {len(cat_lookup)} unique services')
+    print(f'\n{ROUTER.stats()}')
+    
+    print(f'\n🌐 Step 4/4: Web price enrichment (optional)')
+    if os.getenv('ENABLE_WEB_ENRICH', 'false').lower() == 'true':
         try:
             from web_scraper import enrich_with_web_prices
-            enriched = []
             for i, rec in enumerate(validated):
-                print(f'  [{i+1}/{len(validated)}] Web-enriching {rec.get("file", "?")}')
-                enriched.append(enrich_with_web_prices(rec))
-            validated = enriched
+                print(f'  [{i+1}/{len(validated)}] {rec.get("file", "?")}')
+                enrich_with_web_prices(rec)
         except ImportError:
-            print('  ⚠️ duckduckgo-search not installed; skipping web enrichment')
+            print('  ⚠️ Skipping (duckduckgo-search not installed)')
     else:
         print('  ⏭️  Skipped (set ENABLE_WEB_ENRICH=true to enable)')
     
