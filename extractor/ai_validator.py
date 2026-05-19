@@ -1,15 +1,8 @@
-"""
-Multi-LLM validator. Takes heuristic chunks and:
-  1. Validates each field
-  2. Fills in missing data
-  3. Cross-references with web prices (where available)
-
-Uses fallback chain: OpenAI → Groq → Llama
-"""
+"""Multi-LLM validator using the centralized router."""
 import json
 import time
-from typing import Dict, Any, Optional, List
-from config import CFG
+from typing import Dict, Any, List
+from llm_router import ROUTER
 
 VALIDATION_PROMPT = """You are a procurement data quality analyst. Validate and correct this extracted quote data.
 
@@ -22,22 +15,22 @@ RAW TEXT EXCERPT (first 2000 chars):
 TASKS:
 1. Verify the vendor name (correct it if wrong)
 2. Verify the total price is sensible
-3. Verify category matches the services
-4. For each service line item: verify name, sku, quantity, unitPrice make sense
-5. Identify any missing services from the raw text
-6. Flag any suspicious data (e.g. price=0, qty=0, mismatched sku)
+3. For each service line item: verify name, sku, quantity, unitPrice
+4. Identify any missing services from the raw text
+5. Flag any suspicious data (e.g. price=0, qty=0, mismatched sku)
 
-RETURN STRICT JSON in this exact schema (no markdown, no explanation):
+DO NOT categorize services here — that's done in a separate step.
+Just preserve any existing category/subcategory or use generic placeholders.
+
+RETURN STRICT JSON:
 {{
   "vendor": "string",
   "project": "Panasonic|Idemia|Tenneco|Unknown",
-  "category": "Cybersecurity|Network & Telecom|Hosting|M365 & Power Platform|Service Management (SNow)|IdAM",
-  "subcat": "string",
   "country": "string",
   "region": "EMEA|APAC|Americas|Global",
   "price_total": number,
   "year": number,
-  "quarter": "Q1|Q2|Q3|Q4|null",
+  "quarter": "Q1|Q2|Q3|Q4 or null",
   "quoteDate": "YYYY-MM-DD or null",
   "services": [
     {{"name": "string", "sku": "string", "qty": number, "unitPrice": number}}
@@ -47,100 +40,64 @@ RETURN STRICT JSON in this exact schema (no markdown, no explanation):
 }}
 """
 
-def call_openai(prompt: str, model: str = None) -> Optional[str]:
-    if not CFG.has_openai(): return None
-    try:
-        from openai import OpenAI
-        client = OpenAI(api_key=CFG.openai_key)
-        response = client.chat.completions.create(
-            model=model or CFG.openai_model,
-            messages=[
-                {'role': 'system', 'content': 'You return strict JSON only. No markdown, no commentary.'},
-                {'role': 'user', 'content': prompt}
-            ],
-            response_format={'type': 'json_object'},
-            temperature=0.1,
-            max_tokens=4000,
-        )
-        return response.choices[0].message.content
-    except Exception as e:
-        print(f'  ⚠️ OpenAI failed: {e}')
-        return None
-
-def call_groq(prompt: str) -> Optional[str]:
-    if not CFG.has_groq(): return None
-    try:
-        from groq import Groq
-        client = Groq(api_key=CFG.groq_key)
-        response = client.chat.completions.create(
-            model=CFG.groq_model,
-            messages=[
-                {'role': 'system', 'content': 'You return strict JSON only. No markdown, no commentary.'},
-                {'role': 'user', 'content': prompt}
-            ],
-            temperature=0.1,
-            max_tokens=4000,
-            response_format={'type': 'json_object'},
-        )
-        return response.choices[0].message.content
-    except Exception as e:
-        print(f'  ⚠️ Groq failed: {e}')
-        return None
-
-def call_llama(prompt: str) -> Optional[str]:
-    """LlamaParse focuses on parsing; for chat we'd need llama-api separately.
-    If you have a Llama chat endpoint, plug it in here."""
-    return None
 
 def validate_chunk(chunk: Dict[str, Any]) -> Dict[str, Any]:
-    """Run validation through fallback chain."""
+    """Validate a single extracted chunk via the LLM router."""
     if chunk.get('extraction_status') == 'failed':
         return chunk
     
-    # Build prompt
     excerpt = chunk.pop('raw_text_excerpt', '')
+    payload = {k: v for k, v in chunk.items() if k != 'raw_text_excerpt'}
+    
     prompt = VALIDATION_PROMPT.format(
-        chunk=json.dumps({k: v for k, v in chunk.items() if k != 'raw_text_excerpt'}, indent=2),
+        chunk=json.dumps(payload, indent=2),
         excerpt=excerpt[:2000]
     )
     
-    response_text = None
-    used_llm = None
+    response = ROUTER.call(
+        prompt=prompt,
+        system='You return strict JSON only. No markdown, no commentary.',
+        max_tokens=4000,
+        temperature=0.1,
+    )
     
-    # Try OpenAI first (best quality)
-    if not response_text:
-        response_text = call_openai(prompt)
-        if response_text: used_llm = 'openai'
-    
-    # Fallback to Groq (fast + free tier)
-    if not response_text:
-        response_text = call_groq(prompt)
-        if response_text: used_llm = 'groq'
-    
-    # No LLM available → return heuristic-only
-    if not response_text:
+    if not response:
+        # All LLMs dead → return heuristic data as-is
         chunk['extraction_status'] = 'heuristic_only'
-        chunk['validation_notes'] = ['No LLM available for validation']
+        chunk['validation_notes'] = ['All LLM providers unavailable']
         return chunk
     
-    # Parse LLM response
     try:
-        validated = json.loads(response_text)
-        validated['file'] = chunk['file']
+        validated = json.loads(response)
+        validated['file'] = chunk.get('file', 'unknown')
         validated['extraction_status'] = 'validated'
-        validated['validated_by'] = used_llm
+        # Preserve heuristic-detected fields if LLM omitted them
+        for k in ('category', 'subcat'):
+            if k not in validated and k in chunk:
+                validated[k] = chunk[k]
         return validated
     except json.JSONDecodeError as e:
-        print(f'  ⚠️ Invalid JSON from {used_llm}: {e}')
+        print(f'  ⚠️ Invalid JSON from LLM: {str(e)[:100]}')
         chunk['extraction_status'] = 'validation_failed'
         chunk['validation_notes'] = [f'LLM returned invalid JSON: {str(e)[:100]}']
         return chunk
 
+
 def validate_batch(chunks: List[Dict]) -> List[Dict]:
     results = []
     for i, chunk in enumerate(chunks):
-        print(f'  [{i+1}/{len(chunks)}] Validating {chunk.get("file", "?")}...')
+        # Stop wasting cycles if every provider is dead
+        if ROUTER.all_dead():
+            print(f'  ⛔ All LLMs dead — keeping remaining {len(chunks) - i} chunks as heuristic-only')
+            for c in chunks[i:]:
+                c['extraction_status'] = 'heuristic_only'
+                c['validation_notes'] = ['All LLM providers unavailable']
+                results.append(c)
+            break
+        
+        print(f'  [{i+1}/{len(chunks)}] Validating {chunk.get("file", "?")}')
         validated = validate_chunk(chunk)
         results.append(validated)
-        time.sleep(0.3)  # rate limit respect
+        time.sleep(0.25)
+    
     return results
