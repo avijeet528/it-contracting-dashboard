@@ -4,337 +4,985 @@
     "region": "APAC",
     "country": "Japan",
     "cat": "Network & Telecom",
-    "vendor": "Cisco",
-    "file": "Cisco_PASCZ - signed.pdf",
-    "services": [
-      "Cisco Catalyst C8300"
-    ],
-    "price": 17016,
-    "year": 2025,
-    "quarter": "Q1",
-    "_validated": true
-  },
-  {
-    "proj": "Panasonic",
-    "region": "EMEA",
-    "country": "Czech Republic",
-    "cat": "Network & Telecom",
-    "vendor": "Cisco",
-    "file": "CZ - 4595421-4_250880_Panasonic_Cisco_Catalyst_C8300_02102025.pdf",
-    "services": [
-      "Cisco Catalyst C8300"
-    ],
-    "price": 407,
-    "year": 2025,
-    "quarter": "Q1",
-    "_validated": true
-  },
-  {
-    "proj": "Panasonic",
-    "region": "APAC",
-    "country": "Japan",
-    "cat": "Network & Telecom",
-    "vendor": "Cisco",
-    "file": "ClientOrder_AD101-2511-005_20251114 (3).pdf",
-    "services": [
-      "Cisco Catalyst C8300"
-    ],
-    "price": 12467281,
-    "year": 2025,
-    "quarter": "Q1",
-    "_validated": true
-  },
-  {
-    "proj": "Panasonic",
-    "region": "Americas",
-    "country": "United States",
-    "cat": "M365 & Power Platform",
-    "vendor": "Copeland LP",
-    "file": "Copeland New EAS_en-US_CPS_1342548_003_Final_CTM.pdf",
-    "services": [
-      "M365 E5",
-      "Microsoft Defender",
-      "Power BI Premium",
-      "Visio P1",
-      "Visio P2",
-      "Windows 365"
-    ],
-    "price": 0,
-    "year": 2023,
-    "quarter": "Q2",
-    "_validated": true
-  },
-  {
-    "proj": "Panasonic",
-    "region": "APAC",
-    "country": "India",
-    "cat": "Network & Telecom",
-    "vendor": "Cisco",
-    "file": "92922585.pdf",
-    "services": [
-      "Cisco Catalyst C8300",
-      "Cisco Meraki",
-      "Cisco Meraki MR46E"
-    ],
-    "price": 3799672,
-    "year": 2026,
-    "quarter": "Q1",
-    "_validated": true
-  },
-  {
-    "proj": "Panasonic",
-    "region": "APAC",
-    "country": "India",
-    "cat": "Network & Telecom",
-    "vendor": "Cisco",
-    "file": "20251107 _ Panasonic Automotive _ India Sites PDF.pdf",
-    "services": [
-      "Cisco Catalyst C8300",
-      "Cisco Meraki",
-      "Cisco Meraki MR46E"
-    ],
-    "price": 0,
-    "year": 2025,
-    "quarter": "Q1",
-    "_validated": true
-  },
-  {
-    "proj": "Panasonic",
-    "region": "EMEA",
-    "country": "Czech Republic",
-    "cat": "Network & Telecom",
-    "vendor": "Cisco",
-    "file": "Cisco4628852_PASCZ - PO#AD101-2511-006.pdf",
-    "services": [
-      "Cisco Catalyst C8300",
-      "Oracle Database Appliance"
-    ],
-    "price": 17016,
-    "year": 2026,
-    "quarter": "Q4",
-    "_validated": true
-  },
-  {
-    "proj": "Panasonic",
-    "region": "APAC",
-    "country": "India",
-    "cat": "Network & Telecom",
-    "vendor": "Cisco",
-    "file": "92924827.pdf",
-    "services": [
-      "Cisco Meraki",
-      "Cisco Meraki MR46E"
-    ],
-    "price": 2563089,
-    "year": 2026,
-    "quarter": "Q1",
-    "_validated": true
-  },
-  {
-    "proj": "Panasonic",
-    "region": "Global",
-    "country": "Multi-Region",
-    "cat": "M365 & Power Platform",
-    "vendor": "Microsoft",
-    "file": "Microsoft EA - Prelim Yr-Yr Comp - FINAL.xlsx",
-    "services": [
-      "M365 E5",
-      "Power BI Premium",
-      "Visio P1",
-      "Visio P2",
-      "Windows 365"
-    ],
-    "price": 0,
-    "year": 2025,
-    "quarter": "Q1",
-    "_validated": true
-  },
-  {
-    "proj": "Panasonic",
-    "region": "EMEA",
-    "country": "Germany",
-    "cat": "Network & Telecom",
-    "vendor": "Cisco",
-    "file": "9300456211.PDF",
-    "services": [
-      "Cisco Catalyst 9400",
-      "Cisco Catalyst 9800",
-      "Cisco Catalyst C8300",
-      "Security Awareness Training"
-    ],
-    "price": 128,
-    "year": 2026,
-    "quarter": "Q1",
-    "_validated": true
-  },
-  {
-    "proj": "Panasonic",
-    "region": "APAC",
-    "country": "Japan",
-    "cat": "Network & Telecom",
-    "vendor": "Cisco",
+    "subcat": "Cisco License",
+    "vendor": "NTT Docomo",
     "file": "12.5.2025 - Revised Quote - Equinix TY Cisco License - EN.pdf",
-    "services": [],
-    "price": 0,
-    "year": 2025,
-    "quarter": "Q4",
-    "_validated": true
-  },
-  {
-    "proj": "Panasonic",
-    "region": "Americas",
-    "country": "United States",
-    "cat": "IdAM",
-    "vendor": "Quest",
-    "file": "Final PASAP - NTT-Panasonic Auto-Cisco Network Equipment Rev.3.pdf",
+    "folder": null,
     "services": [
-      "Cisco Catalyst 9200",
-      "Cisco Catalyst 9800",
-      "Cisco Catalyst C8300",
-      "Cisco Wireless 9176I",
-      "Oracle Database Appliance"
+      {
+        "name": "Cisco DNA Subscription for Catalyst 8000V",
+        "sku": "L-DNA-C8000V",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "Cisco DNA Advantage Cloud Lic 3Y - upto 1G",
+        "sku": "Cisco DNA-C-T2-A-3Y",
+        "qty": 2,
+        "unitPrice": 1075800
+      },
+      {
+        "name": "Maintenance (24/7 on-site)",
+        "sku": "Cisco DNA-C-T2-A-3Y",
+        "qty": 2,
+        "unitPrice": 145900
+      }
     ],
-    "price": 7582500,
+    "price": 2443700.0,
     "year": 2025,
     "quarter": "Q4",
-    "_validated": true
+    "quoteDate": "2025-12-04"
   },
   {
     "proj": "Panasonic",
     "region": "EMEA",
     "country": "Germany",
     "cat": "Network & Telecom",
-    "vendor": "Cisco",
-    "file": "9300455698.PDF",
-    "services": [],
-    "price": 7693,
+    "subcat": "Cisco DNA",
+    "vendor": "NTT Germany AG & Co. KG",
+    "file": "12.7.2025 - Quote_4613379_PAS Cisco DNA-C8000V for Frankfurt.pdf",
+    "folder": null,
+    "services": [
+      {
+        "name": "L-DNA- Cisco DNA Subscription for Catalyst 8000V",
+        "sku": "L-DNA-C8000V",
+        "qty": 2,
+        "unitPrice": 0
+      }
+    ],
+    "price": 0.0,
     "year": 2025,
-    "quarter": "Q1",
-    "_validated": true
+    "quarter": "Q4",
+    "quoteDate": "2025-10-10"
   },
   {
-    "proj": "Panasonic",
-    "region": "APAC",
-    "country": "India",
-    "cat": "Network & Telecom",
-    "vendor": "Unknown",
-    "file": "92924822.pdf",
-    "services": [
-      "Cisco Meraki"
-    ],
-    "price": 545986,
-    "year": 2026,
-    "quarter": "Q1",
-    "_validated": true
-  },
-  {
-    "proj": "Panasonic",
-    "region": "APAC",
-    "country": "India",
-    "cat": "Network & Telecom",
-    "vendor": "Unknown",
-    "file": "92922627.pdf",
-    "services": [
-      "Cisco Meraki"
-    ],
-    "price": 916860,
-    "year": 2026,
-    "quarter": "Q1",
-    "_validated": true
-  },
-  {
-    "proj": "Panasonic",
+    "proj": "Unknown",
     "region": "Americas",
     "country": "United States",
     "cat": "M365 & Power Platform",
-    "vendor": "Microsoft",
+    "subcat": "M365 Licensing",
+    "vendor": "Thrive Operations, LLC",
     "file": "2024-12-11_Resonant Clinical Solutions_M365 Licensing.pdf",
+    "folder": null,
     "services": [
-      "M365 E3",
-      "M365 E5",
-      "Teams Essentials"
+      {
+        "name": "Microsoft 365 E3 (no Teams)",
+        "sku": "NCE058AB",
+        "qty": 654,
+        "unitPrice": 33.8
+      },
+      {
+        "name": "Microsoft Teams Essentials",
+        "sku": "NCE108B",
+        "qty": 654,
+        "unitPrice": 4
+      },
+      {
+        "name": "Microsoft 365 F3",
+        "sku": "NCE084B",
+        "qty": 161,
+        "unitPrice": null
+      }
     ],
-    "price": 26838,
+    "price": 26838.2,
     "year": 2024,
     "quarter": "Q4",
-    "_validated": true
+    "quoteDate": "2024-12-11"
+  },
+  {
+    "proj": "Panasonic",
+    "region": "APAC",
+    "country": "India",
+    "cat": "Network & Telecom",
+    "subcat": "Routing and Switching",
+    "vendor": "NTT India Pvt. Ltd.",
+    "file": "20251107 _ Panasonic Automotive _ India Sites PDF.pdf",
+    "folder": null,
+    "services": [
+      {
+        "name": "Cisco Catalyst C8300-1N1S-6T Router",
+        "sku": "C8300-1N1S-6T",
+        "qty": 2,
+        "unitPrice": 660542.03
+      },
+      {
+        "name": "CX LEVEL 1 8X5XNBD Cisco Catalyst",
+        "sku": "CON-L1NBD-C830IN6T",
+        "qty": 2,
+        "unitPrice": 379996.02
+      },
+      {
+        "name": "Cisco Catalyst 8300 Edge 8GB memory",
+        "sku": "MEM-C8300-8GB",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "Cisco Catalyst 8000 Edge M.2 USB 16GB",
+        "sku": "M2USB-16G",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "RFID - 1RU for Cisco 8200/8300/8400/8500L Series",
+        "sku": "C-RFID-1R",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "Rack mount kit - 19\" 1RU for Cisco 8300 Series",
+        "sku": "C8300-RM-19-1R",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "NIM Blank for Cisco 8300 Series",
+        "sku": "C8300-NIM-BLANK",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "SM Blank for Cisco 8300 Series",
+        "sku": "C8300-SM-BLANK",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "PIM Blank for Cisco 8300 Series",
+        "sku": "C8300-PIM-BLANK",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "Network Plug-n-Play Connect for zero-touch device deployment",
+        "sku": "NETWORK-PNP-LIC",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "TE agent for IOSXE on Enterprise Routing",
+        "sku": "TE-R-SW",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "Cisco DNA subscription for C8300 series",
+        "sku": "DNA-C8300-SW",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "Cisco DNA Advantage Cloud Lic 3Y - upto 250M (Aggr, 500M)",
+        "sku": "DNA-C-T1-A-3Y",
+        "qty": 2,
+        "unitPrice": 270977.08
+      },
+      {
+        "name": "Cisco Support Enhanced - DNA Advantage Cloud Lic, T1, 3Y",
+        "sku": "SVS-CSTL1-T1-A3Y",
+        "qty": 2,
+        "unitPrice": 55885.26
+      },
+      {
+        "name": "Cisco DNA Advantage Stack - upto 250M (Aggr, 500M)",
+        "sku": "DSTACK-T1-A",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "Cisco Network Advantage Stack - upto 250M (Aggr, 500M)",
+        "sku": "NWSTACK-T1-A",
+        "qty": 2,
+        "unitPrice": 0
+      }
+    ],
+    "price": 34119142.31,
+    "year": 2025,
+    "quarter": "Q4",
+    "quoteDate": "2025-11-07"
+  },
+  {
+    "proj": "Panasonic",
+    "region": "APAC",
+    "country": "India",
+    "cat": "Network & Telecom",
+    "subcat": "Networking Equipment",
+    "vendor": "Cisco",
+    "file": "92922585.pdf",
+    "folder": null,
+    "services": [
+      {
+        "name": "Cisco Catalyst C8300-1N1S-6T Router",
+        "sku": "C8300-1N1S-6T",
+        "qty": 2,
+        "unitPrice": 660542.03
+      },
+      {
+        "name": "Meraki MR46E Wi-Fi 6 Indoor AP",
+        "sku": "MR46E-HW",
+        "qty": 2,
+        "unitPrice": 126085.24
+      }
+    ],
+    "price": 1573254.54,
+    "year": 2026,
+    "quarter": "Q1",
+    "quoteDate": "2026-01-20"
+  },
+  {
+    "proj": "Panasonic",
+    "region": "APAC",
+    "country": "India",
+    "cat": "Network & Telecom",
+    "subcat": "Networking Equipment",
+    "vendor": "NTT India Private Limited",
+    "file": "92922627.pdf",
+    "folder": null,
+    "services": [
+      {
+        "name": "C9300L 24-port PoE, 4x10G Uplink, 715wac PS, w/MERAKI",
+        "sku": "C9300L-24P-4X-M",
+        "qty": 1,
+        "unitPrice": 886418.26
+      },
+      {
+        "name": "1M Type 1 Stacking Cable",
+        "sku": "STACK-T1-1M",
+        "qty": 1,
+        "unitPrice": 15221.22
+      }
+    ],
+    "price": 901639.48,
+    "year": 2026,
+    "quarter": "Q1",
+    "quoteDate": "2026-01-20"
+  },
+  {
+    "proj": "Panasonic",
+    "region": "APAC",
+    "country": "India",
+    "cat": "Network & Telecom",
+    "subcat": "Networking Equipment",
+    "vendor": "NTT India Private Limited",
+    "file": "92924822.pdf",
+    "folder": null,
+    "services": [
+      {
+        "name": "Vendor-Branded Resell",
+        "sku": "CON-ROB-C93L24",
+        "qty": 1,
+        "unitPrice": 79002.62
+      },
+      {
+        "name": "Meraki Advanced License for C9300-M 24-p",
+        "sku": "LIC-C9300-24A-3Y",
+        "qty": 1,
+        "unitPrice": 193990.68
+      }
+    ],
+    "price": 272993.3,
+    "year": 2026,
+    "quarter": "Q1",
+    "quoteDate": "2026-01-22"
+  },
+  {
+    "proj": "Panasonic",
+    "region": "APAC",
+    "country": "India",
+    "cat": "Network & Telecom",
+    "subcat": "Cisco Licenses",
+    "vendor": "NTT India Private Limited",
+    "file": "92924827.pdf",
+    "folder": null,
+    "services": [
+      {
+        "name": "Cisco DNA Advantage Cloud Lic 3Y",
+        "sku": "DNA-C-T1-A-3Y",
+        "qty": 2,
+        "unitPrice": 270977.08
+      },
+      {
+        "name": "Success Track L1 - DNA Advantage Cloud L",
+        "sku": "SVS-CSTL1-T1-A3Y",
+        "qty": 2,
+        "unitPrice": 55885.26
+      }
+    ],
+    "price": 653724.68,
+    "year": 2026,
+    "quarter": "Q1",
+    "quoteDate": "2026-01-22"
   },
   {
     "proj": "Panasonic",
     "region": "EMEA",
     "country": "Czech Republic",
     "cat": "Network & Telecom",
-    "vendor": "Cisco",
+    "subcat": "Routing",
+    "vendor": "NTT",
     "file": "9300031101 Panasonic Automotive Systems Co., Ltd..pdf",
+    "folder": null,
     "services": [
-      "Cisco Catalyst C8300",
-      "Security Awareness Training"
+      {
+        "name": "Cisco Catalyst C8300-1N1S-6T Router",
+        "sku": "C8300-1N1S-6T",
+        "qty": 2,
+        "unitPrice": 3.02
+      },
+      {
+        "name": "Catalyst 8200/8200L/8300 Series Edge-U",
+        "sku": "SC8KBEUK9-1715",
+        "qty": 2,
+        "unitPrice": 0.0
+      },
+      {
+        "name": "IOS XE Autonomous for Unified image",
+        "sku": "IOSXE-AUTO-MODE",
+        "qty": 2,
+        "unitPrice": 0.0
+      },
+      {
+        "name": "Cisco Catalyst 8300 Edge 8GB memory",
+        "sku": "MEM-C8300-8GB",
+        "qty": 2,
+        "unitPrice": 0.0
+      }
     ],
-    "price": 0,
+    "price": 6.04,
     "year": 2025,
-    "quarter": "Q1",
-    "_validated": true
+    "quarter": "Q4",
+    "quoteDate": "2025-12-19"
   },
   {
     "proj": "Panasonic",
     "region": "EMEA",
     "country": "Germany",
     "cat": "Network & Telecom",
-    "vendor": "Cisco",
+    "subcat": "Router and Accessories",
+    "vendor": "NTT Germany AG & Co. KG",
     "file": "9300455600.PDF",
+    "folder": null,
     "services": [
-      "Cisco Catalyst C8300"
+      {
+        "name": "Cisco Catalyst C8300-1N1S-6T Router",
+        "sku": "C8300-1N1S-6T",
+        "qty": 2,
+        "unitPrice": 6.73936
+      },
+      {
+        "name": "Cisco Catalyst 8300 Edge 8GB memory",
+        "sku": "MEM-C8300-8GB",
+        "qty": 2,
+        "unitPrice": 0.0
+      },
+      {
+        "name": "Cisco Catalyst 8000 Edge M.2 USB 16GB",
+        "sku": "M2USB-16G",
+        "qty": 2,
+        "unitPrice": 0.0
+      }
     ],
-    "price": 47872,
+    "price": 13.47872,
+    "year": 2025,
+    "quarter": "Q4",
+    "quoteDate": "2025-12-23"
+  },
+  {
+    "proj": "Panasonic",
+    "region": "EMEA",
+    "country": "Germany",
+    "cat": "Network & Telecom",
+    "subcat": "Wireless",
+    "vendor": "NTT Germany AG & Co. KG",
+    "file": "9300455698.PDF",
+    "folder": null,
+    "services": [
+      {
+        "name": "Cisco Wireless 9172I(W7,3 radio,3 band 2",
+        "sku": "CW9172I-RTG",
+        "qty": 3,
+        "unitPrice": 2.07693
+      }
+    ],
+    "price": 2.47155,
+    "year": 2025,
+    "quarter": "Q4",
+    "quoteDate": "2025-12-24"
+  },
+  {
+    "proj": "Panasonic",
+    "region": "EMEA",
+    "country": "Germany",
+    "cat": "Network & Telecom",
+    "subcat": "Hardware",
+    "vendor": "NTT Germany AG & Co. KG",
+    "file": "9300456211.PDF",
+    "folder": null,
+    "services": [
+      {
+        "name": "Cisco Catalyst C8300-1N1S-6T Router",
+        "sku": "C8300-1N1S-6T",
+        "qty": 2,
+        "unitPrice": 6.73936
+      },
+      {
+        "name": "Cisco Catalyst 8300 Edge 8GB memory",
+        "sku": "MEM-C8300-8GB",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "Cisco Catalyst 8000 Edge M.2 USB 16GB",
+        "sku": "M2USB-16G",
+        "qty": 2,
+        "unitPrice": 0
+      }
+    ],
+    "price": 13.47872,
+    "year": 2026,
+    "quarter": "Q1",
+    "quoteDate": "2026-01-08"
+  },
+  {
+    "proj": "Panasonic",
+    "region": "EMEA",
+    "country": "Czech Republic",
+    "cat": "Network & Telecom",
+    "subcat": "Routing",
+    "vendor": "NTT Czech Republic s.r.o.",
+    "file": "CZ - 4595421-4_250880_Panasonic_Cisco_Catalyst_C8300_02102025.pdf",
+    "folder": null,
+    "services": [
+      {
+        "name": "Cisco Catalyst C8300-1N1S-6T Router",
+        "sku": "C8300-1N1S-6T",
+        "qty": 2,
+        "unitPrice": 72.32
+      },
+      {
+        "name": "Cisco DNA Advantage Cloud Lic 3Y - upto 1G",
+        "sku": "DNA-C-T2-A-3Y",
+        "qty": 2,
+        "unitPrice": 84.38
+      },
+      {
+        "name": "Hardware Part #: SDI Base Parts only BusHrsxNBD: 24x7 Remote",
+        "sku": "C8300-1N1S-6T",
+        "qty": 6,
+        "unitPrice": 15.6
+      }
+    ],
+    "price": 289.28,
     "year": 2025,
     "quarter": "Q1",
-    "_validated": true
+    "quoteDate": "2025-01-11"
+  },
+  {
+    "proj": "Panasonic",
+    "region": "EMEA",
+    "country": "Czech Republic",
+    "cat": "Network & Telecom",
+    "subcat": "Networking Equipment",
+    "vendor": "NTT Data",
+    "file": "Cisco4628852_PASCZ - PO#AD101-2511-006.pdf",
+    "folder": null,
+    "services": [
+      {
+        "name": "Cisco Catalyst C8300-1N1S-6T Router",
+        "sku": "C8300-1N1S-6T",
+        "qty": 2,
+        "unitPrice": 3020.03
+      },
+      {
+        "name": "Cisco DNA Advantage Cloud Lic 3Y - upto 1G",
+        "sku": "DNA-C-T2-A-3Y",
+        "qty": 2,
+        "unitPrice": 3523.64
+      }
+    ],
+    "price": 65178.0,
+    "year": 2025,
+    "quarter": "Q4",
+    "quoteDate": "2025-10-12"
+  },
+  {
+    "proj": "Panasonic",
+    "region": "EMEA",
+    "country": "Czech Republic",
+    "cat": "Network & Telecom",
+    "subcat": "Routing and Switching",
+    "vendor": "NTT Data",
+    "file": "Cisco_PASCZ - signed.pdf",
+    "folder": null,
+    "services": [
+      {
+        "name": "Cisco Catalyst C8300-1N1S-6T Router",
+        "sku": "C8300-1N1S-6T",
+        "qty": 2,
+        "unitPrice": 3020.03
+      },
+      {
+        "name": "Cisco DNA Advantage Cloud Lic 3Y - upto 1G",
+        "sku": "DNA-C-T2-A-3Y",
+        "qty": 2,
+        "unitPrice": 3523.64
+      },
+      {
+        "name": "LOGISTICS (NPR): 225/unit",
+        "sku": "DDNC-OUTBOUND",
+        "qty": 225,
+        "unitPrice": 9.46
+      }
+    ],
+    "price": 65178.0,
+    "year": 2026,
+    "quarter": "Q4",
+    "quoteDate": "2025-10-12"
+  },
+  {
+    "proj": "Panasonic",
+    "region": "EMEA",
+    "country": "Germany",
+    "cat": "Network & Telecom",
+    "subcat": "Routing and Switching",
+    "vendor": "NTT Germany AG & Co. KG",
+    "file": "Cisco_PASEU - signed.pdf",
+    "folder": null,
+    "services": [
+      {
+        "name": "Cisco Catalyst C8300-1N1S-6T Router",
+        "sku": "C8300-1N1S-6T",
+        "qty": 2,
+        "unitPrice": 6.73936
+      },
+      {
+        "name": "Cisco Catalyst 8300 Edge 8GB memory",
+        "sku": "MEM-C8300-8GB",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "Cisco Catalyst 8000 Edge M.2 USB 16GB",
+        "sku": "M2USB-16G",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "RFID - 1RU for Cisco 8200/8300/8400L Series",
+        "sku": "C-RFID-1R",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "Rack mount kit - 19\" 1RU for Cisco 8300 Series",
+        "sku": "C8300-RM-19-1R",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "NIM Blank for Cisco 8300 Series",
+        "sku": "C8300-NIM-BLANK",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "SM Blank for Cisco 8300 Series",
+        "sku": "C8300-SM-BLANK",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "PIM Blank for Cisco 8300 Series",
+        "sku": "C8300-PIM-BLANK",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "Network Plug-n-Play Connect for zero-touch device deployment",
+        "sku": "NETWORK-PNP-LIC",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "TE agent for IOSXE on Enterprise Routing",
+        "sku": "TE-R-SW",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "Cisco DNA subscription for C8300 series",
+        "sku": "DNA-C8300-SW",
+        "qty": 2,
+        "unitPrice": 0
+      }
+    ],
+    "price": 175726.53,
+    "year": 2025,
+    "quarter": "Q4",
+    "quoteDate": "2025-10-11"
   },
   {
     "proj": "Panasonic",
     "region": "APAC",
-    "country": "Japan",
-    "cat": "M365 & Power Platform",
-    "vendor": "Microsoft",
-    "file": "Eng_[PAS] Tenant migration schedule overview_20250724.pdf",
-    "services": [
-      "M365 E3",
-      "M365 E5"
-    ],
-    "price": 0,
-    "year": 2025,
-    "quarter": "Q2",
-    "_validated": true
-  },
-  {
-    "proj": "Panasonic",
-    "region": "EMEA",
-    "country": "Germany",
-    "cat": "IdAM",
-    "vendor": "Cisco",
-    "file": "12.7.2025 - Quote_4613379_PAS Cisco DNA-C8000V for Frankfurt.pdf",
-    "services": [],
-    "price": 12767,
-    "year": 2025,
-    "quarter": "Q1",
-    "_validated": true
-  },
-  {
-    "proj": "Panasonic",
-    "region": "EMEA",
-    "country": "Germany",
+    "country": "India",
     "cat": "Network & Telecom",
-    "vendor": "Cisco",
-    "file": "Cisco_PASEU - signed.pdf",
+    "subcat": "Routing and Switching",
+    "vendor": "NTT India Pvt. Ltd.",
+    "file": "ClientOrder_AD101-2511-005_20251114 (3).pdf",
+    "folder": null,
     "services": [
-      "Cisco Catalyst 9400",
-      "Cisco Catalyst 9800",
-      "Cisco Catalyst C8300",
-      "Security Awareness Training"
+      {
+        "name": "Cisco Catalyst C8300-1N1S-6T Router",
+        "sku": "C8300-1N1S-6T",
+        "qty": 2,
+        "unitPrice": 660542.03
+      },
+      {
+        "name": "CX LEVEL 1 8X5XNBD",
+        "sku": "CON-L1NBD-C830IN6T",
+        "qty": 2,
+        "unitPrice": 379996.02
+      },
+      {
+        "name": "Cisco Catalyst 8300 Edge 8GB memory",
+        "sku": "MEM-C8300-8GB",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "Cisco Catalyst 8000 Edge M.2 USB 16GB",
+        "sku": "M2USB-16G",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "RFID - 1RU for Cisco 8200/8300/8400/8500L Series",
+        "sku": "C-RFID-1R",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "Rack mount kit - 19\" 1RU for Cisco 8300 Series",
+        "sku": "C8300-RM-19-1R",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "NIM Blank for Cisco 8300 Series",
+        "sku": "C8300-NIM-BLANK",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "SM Blank for Cisco 8300 Series",
+        "sku": "C8300-SM-BLANK",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "PIM Blank for Cisco 8300 Series",
+        "sku": "C8300-PIM-BLANK",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "Network Plug-n-Play Connect for zero-touch device deployment",
+        "sku": "NETWORK-PNP-LIC",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "TE agent for IOSXE on Enterprise Routing",
+        "sku": "TE-R-SW",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "Cisco DNA subscription for C8300 series",
+        "sku": "DNA-C8300-SW",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "Cisco DNA Advantage Cloud Lic 3Y - upto 250M",
+        "sku": "DNA-C-T1-A-3Y",
+        "qty": 2,
+        "unitPrice": 270977.08
+      },
+      {
+        "name": "Cisco Support Enhanced - DNA Advantage",
+        "sku": "SVS-CSTL1-T1-A3Y",
+        "qty": 2,
+        "unitPrice": 55885.26
+      },
+      {
+        "name": "Cisco DNA Advantage Stack - upto 250M",
+        "sku": "DSTACK-T1-A",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "Cisco Network Advantage Stack - upto 250M",
+        "sku": "NWSTACK-T1-A",
+        "qty": 2,
+        "unitPrice": 0
+      },
+      {
+        "name": "Meraki MR Advanced License and Support, 2",
+        "sku": "LIC-MR-ADV-3Y",
+        "qty": 2,
+        "unitPrice": 37987.74
+      },
+      {
+        "name": "MA- Meraki AC Power Cord for MX and MS 2",
+        "sku": "PWR-CORD-IN",
+        "qty": 2,
+        "unitPrice": 1270.78
+      },
+      {
+        "name": "7.0 = 1M Type 1 Stacking Cable",
+        "sku": "STACK-T1-1M",
+        "qty": 7,
+        "unitPrice": 15221.22
+      },
+      {
+        "name": "11.0 = 1M Type 1 Stacking Cable",
+        "sku": "STACK-T1A-1M",
+        "qty": 11,
+        "unitPrice": 17049.97
+      }
     ],
-    "price": 175,
+    "price": 12467281.48,
     "year": 2025,
-    "quarter": "Q1",
-    "_validated": true
+    "quarter": "Q4",
+    "quoteDate": "2025-11-07"
+  },
+  {
+    "proj": "Tenneco",
+    "region": "Americas",
+    "country": "United States",
+    "cat": "M365 & Power Platform",
+    "subcat": "Microsoft 365",
+    "vendor": "Microsoft",
+    "file": "Copeland New EAS_en-US_CPS_1342548_003_Final_CTM.pdf",
+    "folder": null,
+    "services": [
+      {
+        "name": "M365 E5 Unified Sub Per User",
+        "sku": "AAD-33168",
+        "qty": 6,
+        "unitPrice": 31.36
+      },
+      {
+        "name": "Visio P1 Sub Per User",
+        "sku": "HWN-00002",
+        "qty": 2,
+        "unitPrice": 3.87
+      },
+      {
+        "name": "Visio P2 Sub Per User",
+        "sku": "N9U-00002",
+        "qty": 2,
+        "unitPrice": 10.44
+      },
+      {
+        "name": "W365 Ent 4vCPU/16GB/128GB Sub Per User",
+        "sku": "I76-00004",
+        "qty": 4,
+        "unitPrice": 59.4
+      },
+      {
+        "name": "Az Consumption Commit Amt in Pool",
+        "sku": "AAD-82407",
+        "qty": 1,
+        "unitPrice": 100.0
+      },
+      {
+        "name": "D365 Guides Device Sub Per Device",
+        "sku": "SNV-00001",
+        "qty": 1,
+        "unitPrice": 502.77
+      },
+      {
+        "name": "D365 Remote Assist Device Sub Per Device",
+        "sku": "STH-00001",
+        "qty": 1,
+        "unitPrice": 502.77
+      },
+      {
+        "name": "Defender Threat Intelligence Sub Per User",
+        "sku": "Q4B-00001",
+        "qty": 1,
+        "unitPrice": 1611.46
+      },
+      {
+        "name": "Defender Vulnerability AO Sub Per User",
+        "sku": "NM1-00001",
+        "qty": 1,
+        "unitPrice": 1.4
+      },
+      {
+        "name": "Exchange Online P2 Sub Per User",
+        "sku": "TQA-00001",
+        "qty": 1,
+        "unitPrice": 6.19
+      },
+      {
+        "name": "Permissions Management Sub",
+        "sku": "NI7-00001",
+        "qty": 1,
+        "unitPrice": 4.03
+      },
+      {
+        "name": "Power Apps Plan Sub Per User",
+        "sku": "SEJ-00002",
+        "qty": 2,
+        "unitPrice": 18.2
+      },
+      {
+        "name": "Adjustable 6/16/2023 Monthly 12 10 United States",
+        "sku": "SPU-00002",
+        "qty": 2,
+        "unitPrice": 12.29
+      },
+      {
+        "name": "Adjustable 6/16/2023 Monthly 12 2 United States",
+        "sku": "GSL-00002",
+        "qty": 2,
+        "unitPrice": 3477.27
+      },
+      {
+        "name": "Adjustable 6/16/2023 Monthly 12 2 United States",
+        "sku": "GSN-00002",
+        "qty": 2,
+        "unitPrice": 6958.02
+      },
+      {
+        "name": "Adjustable 6/16/2023 Monthly 12 25 United States",
+        "sku": "TRS-00002",
+        "qty": 2,
+        "unitPrice": 7.73
+      },
+      {
+        "name": "Per User Promo Adjustable 6/16/2023 Monthly 12 9,300 United States",
+        "sku": "TK2-00060",
+        "qty": 60,
+        "unitPrice": 1.82
+      },
+      {
+        "name": "Adjustable 6/16/2023 Monthly 12 500 United States",
+        "sku": "TJ9-00001",
+        "qty": 1,
+        "unitPrice": 21.84
+      }
+    ],
+    "price": 123456.78,
+    "year": 2023,
+    "quarter": "Q2",
+    "quoteDate": "2023-06-15"
+  },
+  {
+    "proj": "Panasonic",
+    "region": "APAC",
+    "country": "Thailand",
+    "cat": "Network & Telecom",
+    "subcat": "Network Equipment",
+    "vendor": "Cisco",
+    "file": "Final PASAP - NTT-Panasonic Auto-Cisco Network Equipment Rev.3.pdf",
+    "folder": null,
+    "services": [
+      {
+        "name": "1000BASE-BX SFP, 1490NM",
+        "sku": "GLC-BX-D",
+        "qty": 8,
+        "unitPrice": 4000.0
+      },
+      {
+        "name": "Catalyst 9200L 24-port data only, 4 x 1G, Network Essentials",
+        "sku": "C9200L-24T-4G-E",
+        "qty": 48,
+        "unitPrice": 5000.0
+      },
+      {
+        "name": "Cisco Catalyst 9800-L Wireless Controller_Fiber Uplink",
+        "sku": "C9800-L-F-K9",
+        "qty": 19600,
+        "unitPrice": 80000.0
+      },
+      {
+        "name": "10GBASE-CU SFP+ Cable 5 Meter",
+        "sku": "SFP-H10GB-CU5M",
+        "qty": 10,
+        "unitPrice": 2000.0
+      },
+      {
+        "name": "Cisco Wireless License - Advantage",
+        "sku": "LIC-CW-A",
+        "qty": 107,
+        "unitPrice": 500.0
+      },
+      {
+        "name": "Wireless Cisco DNA On-Prem Advantage, 3Y Term Lic",
+        "sku": "AIR-DNA-A-3Y",
+        "qty": 78,
+        "unitPrice": 10000.0
+      },
+      {
+        "name": "10GBASE-SR SFP Module",
+        "sku": "SFP-10G-SR",
+        "qty": 8,
+        "unitPrice": 17500.0
+      }
+    ],
+    "price": 7582500.0,
+    "year": 2025,
+    "quarter": "Q4",
+    "quoteDate": "2025-11-07"
+  },
+  {
+    "proj": "Unknown",
+    "region": "Global",
+    "country": "Unknown",
+    "cat": "M365 & Power Platform",
+    "subcat": "Productivity Software",
+    "vendor": "Microsoft",
+    "file": "Microsoft EA - Prelim Yr-Yr Comp - FINAL.xlsx",
+    "folder": null,
+    "services": [
+      {
+        "name": "M365 E5 Unified Sub Per User",
+        "sku": "Unknown",
+        "qty": 9300,
+        "unitPrice": 31.36
+      },
+      {
+        "name": "Visio P1 Sub Per User",
+        "sku": "Unknown",
+        "qty": 50,
+        "unitPrice": 3.87
+      },
+      {
+        "name": "Visio P2 Sub Per User",
+        "sku": "Unknown",
+        "qty": 710,
+        "unitPrice": 10.44
+      },
+      {
+        "name": "W365 Ent 4vCPU/16GB/128GB Sub Per User",
+        "sku": "Unknown",
+        "qty": 500,
+        "unitPrice": 59.4
+      },
+      {
+        "name": "Azure Monetary Commitment Provision",
+        "sku": "Unknown",
+        "qty": 1,
+        "unitPrice": 0.0
+      }
+    ],
+    "price": 3499776.0,
+    "year": 2025,
+    "quarter": "null",
+    "quoteDate": "null"
   }
 ]
