@@ -38,23 +38,33 @@ jobs:
           # Web-scraping libs for benchmark prices
           pip install beautifulsoup4 requests lxml duckduckgo-search
 
+      - name: Debug — show repo structure
+        run: |
+          echo "=== Working directory ==="
+          pwd
+          echo "=== Repo root ==="
+          ls -la
+          echo "=== quotes/ contents ==="
+          ls -la quotes/ || echo "❌ quotes/ not found at root"
+          echo "=== quotes/panasonic/ contents ==="
+          ls -la quotes/panasonic/ || echo "❌ quotes/panasonic/ not found"
+          echo "=== File count ==="
+          find quotes -type f 2>/dev/null | wc -l || echo "0"
+
       - name: Run extraction pipeline
+        working-directory: ./extractor
         env:
-          # All API keys
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           LLAMA_API_KEY: ${{ secrets.LLAMA_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           G_TOKEN: ${{ secrets.G_TOKEN }}
-          # Azure (for Graph API to fetch SharePoint)
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           SHAREPOINT_SITE_URL: ${{ secrets.SHAREPOINT_SITE_URL }}
-          # Mode
           EXTRACTION_MODE: ${{ inputs.mode || 'hybrid' }}
-        run: |
-          cd extractor
-          python main.py
+          QUOTES_DIR: ../quotes
+        run: python main.py
 
       - name: Commit catalog_data.json
         run: |
