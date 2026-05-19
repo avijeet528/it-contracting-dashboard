@@ -1,126 +1,67 @@
-name: Extract Quotes & Update Dashboard
+name: Extract & Validate Quotes
 
 on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Extraction mode'
+        required: true
+        default: 'hybrid'
+        type: choice
+        options:
+          - 'hybrid'   # Process B: parse → chunk → validate
+          - 'ai_only'  # Process A: LLM does everything
   push:
     paths:
       - 'quotes/**'
-      - 'extractor/**'
-  workflow_dispatch:
-
-permissions:
-  contents: write
-
-concurrency:
-  group: extract-quotes-${{ github.ref }}
-  cancel-in-progress: false
 
 jobs:
   extract:
     runs-on: ubuntu-latest
     timeout-minutes: 60
-    
     steps:
-      - name: Checkout repo
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.G_TOKEN }}
-          persist-credentials: true
-          fetch-depth: 0
-      
-      - name: Set up Python
+
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
-      
+
       - name: Install dependencies
         run: |
-          pip install --upgrade pip
-          pip install -r extractor/requirements.txt
-      
-      # =====================================================================
-      # STAGE 1: Local extraction (NO AI — never fails due to rate limits)
-      # =====================================================================
-      - name: Stage 1 — Local extraction (regex/heuristic)
-        id: extract
-        run: python -m extractor.main --skip-ai --force
-      
-      - name: Commit extracted catalog (Stage 1)
-        if: always()
+          cd extractor
+          pip install -r requirements.txt
+          # Web-scraping libs for benchmark prices
+          pip install beautifulsoup4 requests lxml duckduckgo-search
+
+      - name: Run extraction pipeline
         env:
-          G_TOKEN: ${{ secrets.G_TOKEN }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git remote set-url origin https://x-access-token:${G_TOKEN}@github.com/${{ github.repository }}.git
-          
-          git add catalog_data.json 2>/dev/null || true
-          
-          if git diff --staged --quiet; then
-            echo "ℹ️ No new extractions to commit"
-          else
-            COUNT=$(python -c "import json; print(len(json.load(open('catalog_data.json'))))" 2>/dev/null || echo "?")
-            git commit -m "📊 Local extraction: $COUNT records [skip ci]"
-            
-            for i in 1 2 3; do
-              git pull --rebase origin ${{ github.ref_name }} || true
-              if git push origin HEAD:${{ github.ref_name }}; then
-                echo "✅ Pushed $COUNT records (Stage 1)"
-                break
-              fi
-              sleep 2
-            done
-          fi
-      
-      # =====================================================================
-      # STAGE 2: AI validation (optional — failures don't break pipeline)
-      # =====================================================================
-      - name: Stage 2 — AI validation pass
-        id: validate
-        continue-on-error: true
-        env:
+          # All API keys
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          LLAMA_API_KEY: ${{ secrets.LLAMA_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-        run: python -m extractor.ai_validator
-      
-      - name: Commit AI validation results (Stage 2)
-        if: always()
-        env:
           G_TOKEN: ${{ secrets.G_TOKEN }}
+          # Azure (for Graph API to fetch SharePoint)
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          SHAREPOINT_SITE_URL: ${{ secrets.SHAREPOINT_SITE_URL }}
+          # Mode
+          EXTRACTION_MODE: ${{ inputs.mode || 'hybrid' }}
+        run: |
+          cd extractor
+          python main.py
+
+      - name: Commit catalog_data.json
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          git add catalog_data.json 2>/dev/null || true
-          
-          if git diff --staged --quiet; then
-            echo "ℹ️ No AI corrections to commit"
-          else
-            git commit -m "🤖 AI validation pass [skip ci]"
-            
-            for i in 1 2 3; do
-              git pull --rebase origin ${{ github.ref_name }} || true
-              if git push origin HEAD:${{ github.ref_name }}; then
-                echo "✅ Pushed AI corrections (Stage 2)"
-                break
-              fi
-              sleep 2
-            done
-          fi
-      
-      - name: Final status
-        if: always()
-        run: |
-          if [ "${{ steps.extract.outcome }}" == "success" ]; then
-            echo "✅ Stage 1 (local extraction): SUCCESS"
-          else
-            echo "❌ Stage 1 (local extraction): FAILED"
-          fi
-          
-          if [ "${{ steps.validate.outcome }}" == "success" ]; then
-            echo "✅ Stage 2 (AI validation): SUCCESS"
-          elif [ "${{ steps.validate.outcome }}" == "failure" ]; then
-            echo "⚠️ Stage 2 (AI validation): FAILED (non-critical — local data still committed)"
-          else
-            echo "⏭️ Stage 2 (AI validation): SKIPPED"
-          fi
+          git add catalog_data.json
+          git diff --cached --quiet || git commit -m "🤖 Auto-update catalog [${{ inputs.mode || 'hybrid' }}]"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.G_TOKEN }}
