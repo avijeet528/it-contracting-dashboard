@@ -26,7 +26,7 @@ class Config:
     groq_model: str = 'llama-3.3-70b-versatile' # Fast chatbot
     
     # Paths
-    quotes_dir: str = 'quotes'
+    quotes_dir: str = '../quotes'        # ✅ FIXED: look at repo root
     output_file: str = '../catalog_data.json'
     cache_dir: str = '.cache'
     
