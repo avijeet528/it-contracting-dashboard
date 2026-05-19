@@ -1606,7 +1606,28 @@ function vcol(v){const vs=[...new Set(DB.map(r=>r.vendor))].sort();const i=vs.in
 function vbadge(v){return `<span class="vb" style="background:${vcol(v)}">${esc(v)}</span>`;}
 function toast(m,t){const e=document.getElementById('toast');e.textContent=m;e.className='toast '+(t||'ok')+' on';setTimeout(()=>e.classList.remove('on'),2600);}
 function set(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
-function fmtHtml(t){return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');}
+function fmtHtml(t){
+  let s = String(t||'');
+  // Escape HTML
+  s = s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  // Code blocks
+  s = s.replace(/```([\s\S]+?)```/g, '<pre style="background:var(--line2);padding:8px;border-radius:4px;overflow-x:auto;font-size:.72rem;margin:6px 0"><code>$1</code></pre>');
+  s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+  // Bold + italic
+  s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  // Bulleted lists
+  s = s.replace(/^[\s]*[-•*][\s]+(.+)$/gm, '<li>$1</li>');
+  s = s.replace(/(<li>.*?<\/li>(\s*<li>.*?<\/li>)*)/gs, '<ul>$1</ul>');
+  // Headers
+  s = s.replace(/^###\s+(.+)$/gm, '<strong style="display:block;margin-top:8px;color:var(--or)">$1</strong>');
+  s = s.replace(/^##\s+(.+)$/gm, '<strong style="display:block;margin-top:8px;font-size:.86rem">$1</strong>');
+  // Line breaks
+  s = s.replace(/\n\n/g, '</p><p style="margin:6px 0">');
+  s = s.replace(/\n/g, '<br>');
+  s = '<p style="margin:0">' + s + '</p>';
+  return s;
+}
 function dlCSV(csv,name){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=name;a.click();toast('Exported '+name,'ok');}
 
 function fileLink(record){
@@ -3957,14 +3978,50 @@ async function chatSend(){
   const typingId='ty-'+Date.now();
   body.innerHTML+=`<div class="msg b" id="${typingId}"><div class="bbl"><div class="typing"><div></div><div></div><div></div></div></div></div>`;
   body.scrollTop=body.scrollHeight;
-  await new Promise(r=>setTimeout(r,900));
-  const answer=generateAnswer(q);
+  
+  // Build conversation history (last 3 turns)
+  const history = chatHist.slice(-6).map(h => ({role: h.role, content: h.content}));
+  
+  let answer = '';
+  let engine = 'local';
+  
+  // Try backend API first (catalog-aware)
+  const BACKEND_URL = window.AI_BACKEND_URL || 'http://localhost:8000';
+  try {
+    const r = await fetch(BACKEND_URL + '/api/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({question: q, history})
+    });
+    if(r.ok) {
+      const data = await r.json();
+      answer = data.answer;
+      engine = data.engine || 'api';
+    } else {
+      throw new Error('API non-200');
+    }
+  } catch(e) {
+    // Fallback to local pattern-based answer
+    console.log('Backend unavailable, using local mode:', e.message);
+    answer = generateAnswer(q);
+    engine = 'local';
+  }
+  
+  // Save to history
+  chatHist.push({role: 'user', content: q});
+  chatHist.push({role: 'assistant', content: answer});
+  
   document.getElementById(typingId)?.remove();
-  body.innerHTML+=`<div class="msg b"><div class="bbl">${fmtHtml(answer)}</div></div>`;
-  body.scrollTop=body.scrollHeight;
-  chatBusy=false;
+  body.innerHTML += `<div class="msg b">
+    <div class="bbl">
+      ${fmtHtml(answer)}
+      <div style="font-size:.62rem;color:var(--mid);margin-top:6px;font-style:italic">via ${engine}</div>
+    </div>
+  </div>`;
+  body.scrollTop = body.scrollHeight;
+  chatBusy = false;
 }
-
+  
 function generateAnswer(q){
   const ql=q.toLowerCase();
   const data=DB;
